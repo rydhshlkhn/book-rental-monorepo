@@ -1,0 +1,21 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "JSON Schema for save",
+	"type": "object",
+	"properties": {
+		"email": {
+			"type": "string",
+			"format": "email",
+			"maxLength": 255,
+			"description": "A valid email address with a maximum length of 255 characters."
+		},
+		"password": {
+			"type": "string",
+			"minLength": 6,
+			"maxLength": 255,
+			"description": "Password must be between 8 and 255 characters."
+		}
+  	},
+  	"required": ["email", "password"],
+	"additionalProperties": false
+}

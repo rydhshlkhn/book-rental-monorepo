@@ -1,0 +1,16 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "JSON Schema for save",
+	"type": "object",
+	"properties": {
+		"user_id": {
+			"type": "string"
+		},
+		"device_id": {
+			"type": "string",
+			"minLength": 1
+		}
+	},
+	"required": [ "user_id", "device_id" ],
+	"additionalProperties": true
+}
