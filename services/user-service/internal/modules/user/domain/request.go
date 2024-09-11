@@ -10,6 +10,8 @@ type RequestUser struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
+	RoleID   string `json:"-"`
+	StatusID string `json:"-"`
 }
 
 // Deserialize to db model

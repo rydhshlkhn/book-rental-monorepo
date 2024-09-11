@@ -6,6 +6,7 @@ type PayloadGenerateToken struct {
 	DeviceID string
 	UserID   string
 	Username string
+	Role string
 }
 
 type ResponseGenerateToken struct {

@@ -26,7 +26,7 @@ func NewAuthserviceServiceREST(host string, authKey string) Authservice {
 		authKey: authKey,
 		httpReq: candiutils.NewHTTPRequest(
 			candiutils.HTTPRequestSetRetries(5),
-			candiutils.HTTPRequestSetSleepBetweenRetry(500*time.Millisecond),
+			candiutils.HTTPRequestSetSleepBetweenRetry(100000*time.Millisecond),
 			candiutils.HTTPRequestSetHTTPErrorCodeThreshold(http.StatusBadRequest),
 			candiutils.HTTPRequestSetBreakerName("authservice"),
 		),
@@ -45,6 +45,8 @@ func (us *authserviceRESTImpl) GenerateToken(ctx context.Context, req PayloadGen
 	reqBody := map[string]string{
 		"user_id":   req.UserID,
 		"device_id": req.DeviceID,
+		"role":      req.Role,
+		"username":  req.Username,
 	}
 	uri := fmt.Sprintf("http://localhost:8001/v1/token/generate")
 	body, statusCode, err := candiutils.NewHTTPRequest(

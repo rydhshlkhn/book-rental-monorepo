@@ -47,6 +47,8 @@ func (uc *userUsecaseImpl) Register(ctx context.Context, req *domain.RequestUser
 		Email:        req.Email,
 		PasswordHash: pass.CipherText,
 		PasswordSalt: pass.Salt,
+		RoleID:       1,
+		StatusID:     1,
 	}
 
 	err = uc.repoSQL.UserRepo().Save(ctx, &user)
@@ -68,6 +70,7 @@ func (uc *userUsecaseImpl) Login(ctx context.Context, req *domain.RequestLoginUs
 	defer trace.Finish()
 
 	repoFilter := domain.FilterUser{Email: req.Email}
+	repoFilter.Preloads = []string{"Role"}
 	user, err := uc.repoSQL.UserRepo().Find(ctx, &repoFilter)
 	if err != nil {
 		return
@@ -79,7 +82,7 @@ func (uc *userUsecaseImpl) Login(ctx context.Context, req *domain.RequestLoginUs
 		return
 	}
 
-	payload := authservice.PayloadGenerateToken{DeviceID: "Web", UserID: strconv.Itoa(user.ID)}
+	payload := authservice.PayloadGenerateToken{DeviceID: "Web", UserID: strconv.Itoa(user.ID), Role: user.Role.Name, Username: user.Username}
 	response, _, err := uc.sdk.Authservice().GenerateToken(ctx, payload)
 	if err != nil {
 		return

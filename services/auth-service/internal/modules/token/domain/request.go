@@ -19,4 +19,6 @@ func (r *RequestToken) Deserialize() (res shareddomain.Token) {
 type RequestGenerateToken struct {
 	UserID   string `json:"user_id"`
 	DeviceID string `json:"device_id"`
+	Role     string `json:"role"`
+	Username     string `json:"username"`
 }

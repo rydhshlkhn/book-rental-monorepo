@@ -73,6 +73,8 @@ func (h *RestHandler) generateToken(rw http.ResponseWriter, req *http.Request) {
 
 	var tokenClaim domain.Claim
 	tokenClaim.User.ID = payload.UserID
+	tokenClaim.User.Role = payload.Role
+	tokenClaim.User.Username = payload.Username
 	tokenClaim.DeviceID = payload.DeviceID
 
 	result, err := h.uc.Token().Generate(ctx, &tokenClaim)
