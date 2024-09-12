@@ -37,14 +37,20 @@ func NewRestHandler(uc usecase.Usecase, deps dependency.Dependency) *RestHandler
 // Mount handler with root "/"
 // handling version in here
 func (h *RestHandler) Mount(root interfaces.RESTRouter) {
-	// v1Book := root.Group(candihelper.V1+"/book", h.mw.HTTPBearerAuth)
 	v1Book := root.Group(candihelper.V1+"/book", h.mw.HTTPBearerAuth)
+	v1BookItem := root.Group(candihelper.V1+"/book/item", h.mw.HTTPBearerAuth)
 
-	v1Book.GET("/", h.getAllBook, h.mw.HTTPBearerAuth, h.mw.HTTPPermissionACL("getAllBook"))
+	v1Book.GET("/", h.getAllBook, h.mw.HTTPPermissionACL("getAllBook"))
 	v1Book.GET("/:id", h.getDetailBookByID, h.mw.HTTPPermissionACL("getDetailBook"))
 	v1Book.POST("/", h.createBook, h.mw.HTTPPermissionACL("createBook"))
 	v1Book.PUT("/:id", h.updateBook, h.mw.HTTPPermissionACL("updateBook"))
 	v1Book.DELETE("/:id", h.deleteBook, h.mw.HTTPPermissionACL("deleteBook"))
+
+	// Book items
+	v1BookItem.GET("/:id", h.getDetailBookItemByID, h.mw.HTTPPermissionACL("getDetailBookItem"))
+	v1BookItem.POST("/", h.createBookItem, h.mw.HTTPPermissionACL("createBookItem"))
+	v1BookItem.PUT("/:id", h.updateBookItem, h.mw.HTTPPermissionACL("updateBookItem"))
+	v1BookItem.DELETE("/:id", h.deleteBookItem, h.mw.HTTPPermissionACL("deleteBookItem"))
 }
 
 // GetAllBook documentation
@@ -202,9 +208,133 @@ func (h *RestHandler) updateBook(rw http.ResponseWriter, req *http.Request) {
 func (h *RestHandler) deleteBook(rw http.ResponseWriter, req *http.Request) {
 	trace, ctx := tracer.StartTraceWithContext(req.Context(), "BookDeliveryREST:DeleteBook")
 	defer trace.Finish()
-	
+
 	id, _ := strconv.Atoi(restserver.URLParam(req, "id"))
 	if err := h.uc.Book().DeleteBook(ctx, id); err != nil {
+		wrapper.NewHTTPResponse(http.StatusBadRequest, err.Error()).JSON(rw)
+		return
+	}
+
+	wrapper.NewHTTPResponse(http.StatusOK, "Success").JSON(rw)
+}
+
+// Book  Item
+// GetDetailBook documentation
+// @Summary			Get Detail BookIitem
+// @Description		API for get detail book item
+// @Tags			BookItem
+// @Accept			json
+// @Produce			json
+// @Param			id	path	string	true	"ID"
+// @Success			200	{object}	domain.ResponseBook
+// @Success			400	{object}	wrapper.HTTPResponse
+// @Security		ApiKeyAuth
+// @Router			/v1/book/{id} [get]
+func (h *RestHandler) getDetailBookItemByID(rw http.ResponseWriter, req *http.Request) {
+	trace, ctx := tracer.StartTraceWithContext(req.Context(), "BookDeliveryREST:GetDetailBookByID")
+	defer trace.Finish()
+
+	id, _ := strconv.Atoi(restserver.URLParam(req, "id"))
+	data, err := h.uc.Book().GetDetailBookItem(ctx, id)
+	if err != nil {
+		wrapper.NewHTTPResponse(http.StatusBadRequest, err.Error()).JSON(rw)
+		return
+	}
+
+	wrapper.NewHTTPResponse(http.StatusOK, "Success", data).JSON(rw)
+}
+
+// CreateBook documentation
+// @Summary			Create Book Item
+// @Description		API for create book
+// @Tags			BookItem
+// @Accept			json
+// @Produce			json
+// @Param			data	body	domain.RequestBook	true	"Body Data"
+// @Success			200	{object}	domain.ResponseBook
+// @Success			400	{object}	wrapper.HTTPResponse
+// @Security		ApiKeyAuth
+// @Router			/v1/book [post]
+func (h *RestHandler) createBookItem(rw http.ResponseWriter, req *http.Request) {
+	trace, ctx := tracer.StartTraceWithContext(req.Context(), "BookDeliveryREST:CreateBook")
+	defer trace.Finish()
+
+	body, _ := io.ReadAll(req.Body)
+	if err := h.validator.ValidateDocument("book/save_book_item", body); err != nil {
+		wrapper.NewHTTPResponse(http.StatusBadRequest, "Failed validate payload", err).JSON(rw)
+		return
+	}
+
+	var payload domain.RequestBookItem
+	if err := json.Unmarshal(body, &payload); err != nil {
+		wrapper.NewHTTPResponse(http.StatusBadRequest, err.Error()).JSON(rw)
+		return
+	}
+
+	res, err := h.uc.Book().CreateBookItem(ctx, &payload)
+	if err != nil {
+		wrapper.NewHTTPResponse(http.StatusBadRequest, err.Error()).JSON(rw)
+		return
+	}
+
+	wrapper.NewHTTPResponse(http.StatusCreated, "Success", res).JSON(rw)
+}
+
+// UpdateBook documentation
+// @Summary			Update Book Item
+// @Description		API for update book
+// @Tags			BookItem
+// @Accept			json
+// @Produce			json
+// @Param			id	path	string	true	"ID"
+// @Param			data	body	domain.RequestBook	true	"Body Data"
+// @Success			200	{object}	domain.ResponseBook
+// @Success			400	{object}	wrapper.HTTPResponse
+// @Security		ApiKeyAuth
+// @Router			/v1/book/{id} [put]
+func (h *RestHandler) updateBookItem(rw http.ResponseWriter, req *http.Request) {
+	trace, ctx := tracer.StartTraceWithContext(req.Context(), "BookDeliveryREST:UpdateBook")
+	defer trace.Finish()
+
+	body, _ := io.ReadAll(req.Body)
+	if err := h.validator.ValidateDocument("book/save_book_item", body); err != nil {
+		wrapper.NewHTTPResponse(http.StatusBadRequest, "Failed validate payload", err).JSON(rw)
+		return
+	}
+
+	var payload domain.RequestBookItem
+	if err := json.Unmarshal(body, &payload); err != nil {
+		wrapper.NewHTTPResponse(http.StatusBadRequest, err.Error()).JSON(rw)
+		return
+	}
+
+	payload.ID, _ = strconv.Atoi(restserver.URLParam(req, "id"))
+	err := h.uc.Book().UpdateBookItem(ctx, &payload)
+	if err != nil {
+		wrapper.NewHTTPResponse(http.StatusBadRequest, err.Error()).JSON(rw)
+		return
+	}
+
+	wrapper.NewHTTPResponse(http.StatusOK, "Success").JSON(rw)
+}
+
+// DeleteBook documentation
+// @Summary			Delete Book Item
+// @Description		API for delete book  item
+// @Tags			Bookitem
+// @Accept			json
+// @Produce			json
+// @Param			id	path	string	true	"ID"
+// @Success			200	{object}	domain.ResponseBook
+// @Success			400	{object}	wrapper.HTTPResponse
+// @Security		ApiKeyAuth
+// @Router			/v1/book/{id} [delete]
+func (h *RestHandler) deleteBookItem(rw http.ResponseWriter, req *http.Request) {
+	trace, ctx := tracer.StartTraceWithContext(req.Context(), "BookDeliveryREST:DeleteBookItem")
+	defer trace.Finish()
+
+	id, _ := strconv.Atoi(restserver.URLParam(req, "id"))
+	if err := h.uc.Book().DeleteBookItem(ctx, id); err != nil {
 		wrapper.NewHTTPResponse(http.StatusBadRequest, err.Error()).JSON(rw)
 		return
 	}

@@ -18,4 +18,8 @@ type BookRepository interface {
 	Find(ctx context.Context, filter *domain.FilterBook) (shareddomain.Book, error)
 	SaveBook(ctx context.Context, data *shareddomain.Book, updateOptions ...candishared.DBUpdateOptionFunc) error
 	Delete(ctx context.Context, filter *domain.FilterBook) (err error)
+	//Book Item
+	FindItem(ctx context.Context, filter *domain.FilterBookItem) (result shareddomain.BookItem, err error)
+	SaveBookItem(ctx context.Context, data *shareddomain.BookItem, updateOptions ...candishared.DBUpdateOptionFunc) (err error)
+	DeleteItem(ctx context.Context, filter *domain.FilterBookItem) (err error)
 }

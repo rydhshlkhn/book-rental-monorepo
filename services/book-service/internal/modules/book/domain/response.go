@@ -23,6 +23,23 @@ type ResponseBookItem struct {
 	StatusID        int       `json:"status_id"`
 	DateOfPurchase  time.Time `json:"date_of_purchase"`
 	PublicationDate time.Time `json:"publication_date"`
+	CreatedAt    string             `json:"createdAt"`
+	UpdatedAt    string             `json:"updatedAt"`
+}
+
+// Serialize from db model
+func (r *ResponseBookItem) Serialize(source *shareddomain.BookItem) {
+	r.ID = source.ID
+	r.Barcode = source.Barcode
+	r.IsReferenceOnly = source.IsReferenceOnly
+	r.Borrowed = source.Borrowed
+	r.DueDate = source.DueDate
+	r.FormatID = source.FormatID
+	r.StatusID = source.StatusID
+	r.DateOfPurchase = source.DateOfPurchase
+	r.PublicationDate = source.PublicationDate
+	r.CreatedAt = source.CreatedAt.Format(time.RFC3339)
+	r.UpdatedAt = source.UpdatedAt.Format(time.RFC3339)
 }
 
 // ResponseBook model

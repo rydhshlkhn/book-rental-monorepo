@@ -8,12 +8,12 @@ import (
 	"github.com/golangid/candi/tracer"
 )
 
-func (uc *bookUsecaseImpl) CreateBook(ctx context.Context, req *domain.RequestBook) (result domain.ResponseBook, err error) {
-	trace, ctx := tracer.StartTraceWithContext(ctx, "BookUsecase:CreateBook")
+func (uc *bookUsecaseImpl) CreateBookItem(ctx context.Context, req *domain.RequestBookItem) (result domain.ResponseBookItem, err error) {
+	trace, ctx := tracer.StartTraceWithContext(ctx, "BookUsecase:CreateBookItem")
 	defer trace.Finish()
 
 	data := req.Deserialize()
-	err = uc.repoSQL.BookRepo().SaveBook(ctx, &data)
+	err = uc.repoSQL.BookRepo().SaveBookItem(ctx, &data)
 	result.Serialize(&data)
 
 	// Sample using broker publisher

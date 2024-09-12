@@ -128,3 +128,57 @@ func (r *bookRepoSQL) setFilterBook(db *gorm.DB, filter *domain.FilterBook) *gor
 
 	return db
 }
+
+// Book Item
+func (r *bookRepoSQL) FindItem(ctx context.Context, filter *domain.FilterBookItem) (result shareddomain.BookItem, err error) {
+	trace, ctx := tracer.StartTraceWithContext(ctx, "BookRepoSQL:Find")
+	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
+
+	err = r.setFilterBookItem(globalshared.SetSpanToGorm(ctx, r.readDB), filter).First(&result).Error
+	return
+}
+
+func (r *bookRepoSQL) SaveBookItem(ctx context.Context, data *shareddomain.BookItem, updateOptions ...candishared.DBUpdateOptionFunc) (err error) {
+	trace, ctx := tracer.StartTraceWithContext(ctx, "BookRepoSQL:Save")
+	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
+
+	db := r.writeDB
+	if tx, ok := candishared.GetValueFromContext(ctx, candishared.ContextKeySQLTransaction).(*gorm.DB); ok {
+		db = tx
+	}
+	data.UpdatedAt = time.Now()
+	if data.CreatedAt.IsZero() {
+		data.CreatedAt = time.Now()
+	}
+	if data.ID == 0 {
+		err = globalshared.SetSpanToGorm(ctx, db).Create(data).Error
+	} else {
+		err = globalshared.SetSpanToGorm(ctx, db).Model(data).Omit(clause.Associations).Updates(r.updateTools.ToMap(data, updateOptions...)).Error
+	}
+	return
+}
+
+func (r *bookRepoSQL) DeleteItem(ctx context.Context, filter *domain.FilterBookItem) (err error) {
+	trace, ctx := tracer.StartTraceWithContext(ctx, "BookRepoSQL:DeleteItem")
+	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
+
+	db := r.writeDB
+	if tx, ok := candishared.GetValueFromContext(ctx, candishared.ContextKeySQLTransaction).(*gorm.DB); ok {
+		db = tx
+	}
+	err = r.setFilterBookItem(globalshared.SetSpanToGorm(ctx, db), filter).Delete(&shareddomain.BookItem{}).Error
+	return
+}
+
+func (r *bookRepoSQL) setFilterBookItem(db *gorm.DB, filter *domain.FilterBookItem) *gorm.DB {
+
+	if filter.ID != nil {
+		db = db.Where("id = ?", *filter.ID)
+	}
+
+	for _, preload := range filter.Preloads {
+		db = db.Preload(preload)
+	}
+
+	return db
+}

@@ -13,3 +13,11 @@ type FilterBook struct {
 	EndDate   string   `json:"endDate"`
 	Preloads  []string `json:"-"`
 }
+
+type FilterBookItem struct {
+	candishared.Filter
+	ID        *int     `json:"id"`
+	StartDate string   `json:"startDate"`
+	EndDate   string   `json:"endDate"`
+	Preloads  []string `json:"-"`
+}

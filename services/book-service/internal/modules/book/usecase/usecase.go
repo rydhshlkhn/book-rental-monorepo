@@ -21,6 +21,12 @@ type BookUsecase interface {
 	CreateBook(ctx context.Context, data *domain.RequestBook) (res domain.ResponseBook, err error)
 	UpdateBook(ctx context.Context, data *domain.RequestBook) (err error)
 	DeleteBook(ctx context.Context, id int) (err error)
+	//Book Item
+	GetDetailBookItem(ctx context.Context, id int) (result domain.ResponseBookItem, err error)
+	CreateBookItem(ctx context.Context, req *domain.RequestBookItem) (result domain.ResponseBookItem, err error)
+	UpdateBookItem(ctx context.Context, data *domain.RequestBookItem) (err error)
+	DeleteBookItem(ctx context.Context, id int) (err error)
+	// middleware
 	ValidateToken(ctx context.Context, tokenString string) (claim *candishared.TokenClaim, err error)
 }
 
