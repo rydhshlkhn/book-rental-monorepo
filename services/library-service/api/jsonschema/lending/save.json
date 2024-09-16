@@ -1,0 +1,41 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "JSON Schema for save",
+	"type": "object",
+	"properties": {
+        "id": {
+          "type": "integer",
+          "description": "The unique identifier for a lending."
+        },
+        "book_item_id": {
+          "type": "integer",
+          "description": "The identifier of the book item being lent."
+        },
+		"user_id": {
+          "type": "integer",
+          "description": "The identifier of the user who reserved the book."
+        },
+        "due_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The due date for returning the book."
+        },
+        "return_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date when the book was returned."
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the lending was created."
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the lending was last updated."
+        }
+      },
+    "required": ["book_item_id", "user_id", "due_date"],
+	"additionalProperties": false
+}

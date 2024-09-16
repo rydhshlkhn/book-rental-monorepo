@@ -14,11 +14,11 @@ import (
 
 // TokenUsecase abstraction
 type TokenUsecase interface {
-	GetAllToken(ctx context.Context, filter *domain.FilterToken) (data domain.ResponseTokenList, err error)
-	GetDetailToken(ctx context.Context, id int) (data domain.ResponseToken, err error)
-	CreateToken(ctx context.Context, data *domain.RequestToken) (res domain.ResponseToken, err error)
-	UpdateToken(ctx context.Context, data *domain.RequestToken) (err error)
-	DeleteToken(ctx context.Context, id int) (err error)
+	// GetAllToken(ctx context.Context, filter *domain.FilterToken) (data domain.ResponseTokenList, err error)
+	// GetDetailToken(ctx context.Context, id int) (data domain.ResponseToken, err error)
+	// CreateToken(ctx context.Context, data *domain.RequestToken) (res domain.ResponseToken, err error)
+	// UpdateToken(ctx context.Context, data *domain.RequestToken) (err error)
+	// DeleteToken(ctx context.Context, id int) (err error)
 	Generate(ctx context.Context, data *domain.Claim) (result domain.ResponseGenerateToken, err error)
 	Validate(ctx context.Context, tokenString string) (claim *domain.Claim, err error)
 }

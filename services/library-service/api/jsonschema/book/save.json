@@ -1,0 +1,92 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "JSON Schema for save",
+	"type": "object",
+	"properties": {
+		"id": {
+		"type": "integer",
+		"description": "ID of the book"
+		},
+		"isbn": {
+		"type": "string",
+		"maxLength": 13,
+		"description": "ISBN of the book"
+		},
+		"title": {
+		"type": "string",
+		"maxLength": 255,
+		"description": "Title of the book"
+		},
+		"subject": {
+		"type": "string",
+		"maxLength": 255,
+		"description": "Subject of the book"
+		},
+		"publisher": {
+		"type": "string",
+		"maxLength": 255,
+		"description": "Publisher of the book"
+		},
+		"language": {
+		"type": "string",
+		"maxLength": 100,
+		"description": "Language of the book"
+		},
+		"numberOfPage": {
+		"type": "integer",
+		"description": "Number of pages in the book"
+		},
+		"book_items": {
+		"type": "array",
+		"items": {
+			"type": "object",
+			"properties": {
+			"id": {
+				"type": "integer",
+				"description": "ID of the book item"
+			},
+			"barcode": {
+				"type": "string",
+				"description": "Barcode of the book item"
+			},
+			"is_reference_only": {
+				"type": "boolean",
+				"description": "Whether the book item is for reference only"
+			},
+			"borrowed": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Timestamp of when the book item was borrowed"
+			},
+			"due_date": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Due date for returning the book item"
+			},
+			"format_id": {
+				"type": "integer",
+				"description": "ID of the book format"
+			},
+			"status_id": {
+				"type": "integer",
+				"description": "ID of the book status"
+			},
+			"date_of_purchase": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Date of purchase for the book item"
+			},
+			"publication_date": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Publication date of the book item"
+			}
+			},
+			"required": ["barcode", "is_reference_only"],
+			"additionalProperties": false
+		}
+		}
+	},
+	"required": ["isbn", "title"],
+	"additionalProperties": false
+}

@@ -50,6 +50,7 @@ require (
 	github.com/klauspost/compress v1.17.8 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mfridman/interpolate v0.0.2 // indirect
+	github.com/midtrans/midtrans-go v1.3.8 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect

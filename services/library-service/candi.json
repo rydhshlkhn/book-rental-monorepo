@@ -1,0 +1,43 @@
+{
+     "GoVersion": "1.21",
+     "Version": "v1.17.15",
+     "ServiceName": "library-service",
+     "PackagePrefix": "monorepo/services/library-service",
+     "ProtoSource": "monorepo/sdk/library-service/proto",
+     "Owner": "",
+     "License": "",
+     "Year": 2024,
+     "IsMonorepo": true,
+     "RestHandler": true,
+     "GRPCHandler": false,
+     "GraphQLHandler": false,
+     "FiberRestHandler": false,
+     "KafkaHandler": false,
+     "SchedulerHandler": false,
+     "RedisSubsHandler": false,
+     "TaskQueueHandler": false,
+     "PostgresListenerHandler": false,
+     "RabbitMQHandler": false,
+     "IsWorkerActive": false,
+     "RedisDeps": false,
+     "SQLDeps": true,
+     "MongoDeps": false,
+     "SQLUseGORM": true,
+     "ArangoDeps": false,
+     "SQLDriver": "postgres",
+     "WorkerPlugins": null,
+     "Modules": [
+          {
+               "ModuleName": "book"
+          },
+          {
+               "ModuleName": "fine"
+          },
+          {
+               "ModuleName": "lending"
+          },
+          {
+               "ModuleName": "reservation"
+          }
+     ]
+}
