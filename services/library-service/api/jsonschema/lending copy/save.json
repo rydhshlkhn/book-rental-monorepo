@@ -3,10 +3,6 @@
 	"title": "JSON Schema for save",
 	"type": "object",
 	"properties": {
-        "id": {
-          "type": "integer",
-          "description": "The unique identifier for a lending."
-        },
         "book_item_id": {
           "type": "integer",
           "description": "The identifier of the book item being lent."

@@ -18,7 +18,7 @@ func (uc *fineUsecaseImpl) UpdateFine(ctx context.Context, data *domain.RequestF
 	if err != nil {
 		return err
 	}
-	existing.BookItemID = data.BookItemID
+	existing.PaymentStatus = data.PaymentStatus
 	err = uc.repoSQL.WithTransaction(ctx, func(ctx context.Context) error {
 		return uc.repoSQL.FineRepo().Save(ctx, &existing, candishared.DBUpdateSetUpdatedFields("Field"))
 	})

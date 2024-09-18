@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"time"
 
 	domainbook "monorepo/services/library-service/internal/modules/book/domain"
 	"monorepo/services/library-service/internal/modules/lending/domain"
@@ -42,7 +43,10 @@ func (uc *lendingUsecaseImpl) CreateLending(ctx context.Context, req *domain.Req
 			return err
 		}
 
+		dueDate := time.Now().AddDate(0, 0, 7)
 		data := req.Deserialize()
+		data.DueDate = dueDate
+
 		err = <- uc.repoSQL.LendingRepo().Save(ctx, &data)
 		if err != nil {
 			return err
@@ -86,5 +90,5 @@ func (uc *lendingUsecaseImpl) CreateLending(ctx context.Context, req *domain.Req
 	// 		Key:     "[key]",
 	// 		Message: candihelper.ToBytes("[message]"),
 	// 	})
-	return
+	// return
 }

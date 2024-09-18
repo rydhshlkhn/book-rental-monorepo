@@ -28,7 +28,18 @@ func (r *ResponseLending) Serialize(source *shareddomain.Lending) {
 	r.ID = source.ID
 	r.BookItemID = source.BookItemID
 	r.DueDate = source.DueDate.Format(time.RFC3339)
-	r.ReturnDate = source.ReturnDate.Format(time.RFC3339)
 	r.CreatedAt = source.CreatedAt.Format(time.RFC3339)
 	r.UpdatedAt = source.UpdatedAt.Format(time.RFC3339)
+	if source.ReturnDate != nil {
+		r.ReturnDate = source.ReturnDate.Format(time.RFC3339)
+	}
+}
+
+type ReturnLending struct {
+	PaymentURL    string `json:"payment_url"`
+}
+
+// Serialize from db model
+func (r *ReturnLending) Serialize(source *shareddomain.Fine) {
+	r.PaymentURL = source.SnanpURL
 }

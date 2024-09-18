@@ -7,16 +7,16 @@ import (
 // RequestFine model
 type RequestFine struct {
 	ID         int `json:"id"`
-	BookItemID int `json:"book_item_id"`
-	UserID     int `json:"user_id"`
+	LendingID int `json:"lending_id"`
+	PaymentStatus string `json:"payment_status"`
 	Amount     int `json:"amount"`
 }
 
 // Deserialize to db model
 func (r *RequestFine) Deserialize() (res shareddomain.Fine) {
 	res.ID = r.ID
-	res.BookItemID = r.BookItemID
-	res.UserID = r.UserID
+	res.LendingID = r.LendingID
 	res.Amount = r.Amount
+	res.PaymentStatus = r.PaymentStatus
 	return
 }

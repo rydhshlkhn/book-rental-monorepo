@@ -18,6 +18,7 @@ type LendingUsecase interface {
 	GetDetailLending(ctx context.Context, id int) (data domain.ResponseLending, err error)
 	CreateLending(ctx context.Context, data *domain.RequestLending) (res domain.ResponseLending, err error) 
 	UpdateLending(ctx context.Context, data *domain.RequestLending) (err error)
+	ReturnLending(ctx context.Context, id int) (result domain.ReturnLending, err error)
 	DeleteLending(ctx context.Context, id int) (err error)
 }
 

@@ -42,7 +42,7 @@ func (h *RestHandler) Mount(root interfaces.RESTRouter) {
 	v1Lending.GET("/", h.getAllLending, h.mw.HTTPPermissionACL("getAllLending"))
 	v1Lending.GET("/:id", h.getDetailLendingByID, h.mw.HTTPPermissionACL("getDetailLending"))
 	v1Lending.POST("/", h.createLending, h.mw.HTTPPermissionACL("createLending"))
-	v1Lending.PUT("/:id", h.updateLending, h.mw.HTTPPermissionACL("updateLending"))
+	v1Lending.PUT("/return/:id", h.returnLending, h.mw.HTTPPermissionACL("updateLending"))
 	v1Lending.DELETE("/:id", h.deleteLending, h.mw.HTTPPermissionACL("deleteLending"))
 }
 
@@ -161,30 +161,18 @@ func (h *RestHandler) createLending(rw http.ResponseWriter, req *http.Request) {
 // @Success			400	{object}	wrapper.HTTPResponse
 // @Security		ApiKeyAuth
 // @Router			/v1/lending/{id} [put]
-func (h *RestHandler) updateLending(rw http.ResponseWriter, req *http.Request) {
+func (h *RestHandler) returnLending(rw http.ResponseWriter, req *http.Request) {
 	trace, ctx := tracer.StartTraceWithContext(req.Context(), "LendingDeliveryREST:UpdateLending")
 	defer trace.Finish()
 
-	body, _ := io.ReadAll(req.Body)
-	if err := h.validator.ValidateDocument("lending/save", body); err != nil {
-		wrapper.NewHTTPResponse(http.StatusBadRequest, "Failed validate payload", err).JSON(rw)
-		return
-	}
-
-	var payload domain.RequestLending
-	if err := json.Unmarshal(body, &payload); err != nil {
-		wrapper.NewHTTPResponse(http.StatusBadRequest, err.Error()).JSON(rw)
-		return
-	}
-
-	payload.ID, _ = strconv.Atoi(restserver.URLParam(req, "id"))
-	err := h.uc.Lending().UpdateLending(ctx, &payload)
+	id, _ := strconv.Atoi(restserver.URLParam(req, "id"))
+	res, err := h.uc.Lending().ReturnLending(ctx, id)
 	if err != nil {
 		wrapper.NewHTTPResponse(http.StatusBadRequest, err.Error()).JSON(rw)
 		return
 	}
 
-	wrapper.NewHTTPResponse(http.StatusOK, "Success").JSON(rw)
+	wrapper.NewHTTPResponse(http.StatusOK, "Success", res).JSON(rw)
 }
 
 // DeleteLending documentation

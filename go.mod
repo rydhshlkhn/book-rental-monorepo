@@ -5,10 +5,12 @@ go 1.21
 toolchain go1.22.5
 
 require (
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golangid/candi v1.17.15
 	github.com/lib/pq v1.10.9
 	github.com/pressly/goose/v3 v3.21.1
 	github.com/stretchr/testify v1.9.0
+	golang.org/x/crypto v0.22.0
 	google.golang.org/grpc v1.63.2
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.11
@@ -24,7 +26,6 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.11.2 // indirect
-	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/golangid/candi-plugin/task-queue-worker v0.0.0-20240325071844-1f6ff4cee434 // indirect
 	github.com/golangid/gojsonschema v0.0.1 // indirect
@@ -74,7 +75,6 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
-	golang.org/x/crypto v0.22.0 // indirect
 	golang.org/x/net v0.24.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.19.0 // indirect
