@@ -20,7 +20,7 @@ func (uc *lendingUsecaseImpl) UpdateLending(ctx context.Context, data *domain.Re
 	trace, ctx := tracer.StartTraceWithContext(ctx, "LendingUsecase:UpdateLending")
 	defer trace.Finish()
 
-	repoFilter := domain.FilterLending{ID: &data.ID}
+	repoFilter := shareddomain.LendingParamGet{ID: &data.ID}
 	existing, err := uc.repoSQL.LendingRepo().Find(ctx, &repoFilter)
 	if err != nil {
 		return err

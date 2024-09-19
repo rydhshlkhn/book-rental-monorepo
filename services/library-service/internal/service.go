@@ -3,6 +3,7 @@
 package libraryservice
 
 import (
+	"monorepo/services/library-service/internal/modules/payment"
 	"monorepo/services/library-service/internal/modules/book"
 	"monorepo/services/library-service/internal/modules/fine"
 	"monorepo/services/library-service/internal/modules/lending"
@@ -30,6 +31,7 @@ func NewService(cfg *config.Config) factory.ServiceFactory {
 	deps := configs.LoadServiceConfigs(cfg)
 
 	modules := []factory.ModuleFactory{
+		payment.NewModule(deps),
 		book.NewModule(deps),
 		fine.NewModule(deps),
 		lending.NewModule(deps),

@@ -37,6 +37,9 @@
                "ModuleName": "lending"
           },
           {
+               "ModuleName": "payment"
+          },
+          {
                "ModuleName": "reservation"
           }
      ]

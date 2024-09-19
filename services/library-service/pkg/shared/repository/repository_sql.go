@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	// @candi:repositoryImport
+	paymentrepo "monorepo/services/library-service/internal/modules/payment/repository"
 	bookrepo "monorepo/services/library-service/internal/modules/book/repository"
 	finerepo "monorepo/services/library-service/internal/modules/fine/repository"
 	lendingrepo "monorepo/services/library-service/internal/modules/lending/repository"
@@ -28,6 +29,7 @@ type (
 		WithTransaction(ctx context.Context, txFunc func(ctx context.Context) error) (err error)
 
 		// @candi:repositoryMethod
+		PaymentRepo() paymentrepo.PaymentRepository
 		ReservationRepo() reservationrepo.ReservationRepository
 		LendingRepo() lendingrepo.LendingRepository
 		FineRepo() finerepo.FineRepository
@@ -39,6 +41,7 @@ type (
 
 		// register all repository from modules
 		// @candi:repositoryField
+		paymentRepo paymentrepo.PaymentRepository
 		reservationRepo reservationrepo.ReservationRepository
 		lendingRepo     lendingrepo.LendingRepository
 		fineRepo        finerepo.FineRepository
@@ -84,6 +87,7 @@ func NewRepositorySQL(readDB, writeDB *gorm.DB) RepoSQL {
 		readDB: readDB, writeDB: writeDB,
 
 		// @candi:repositoryConstructor
+		paymentRepo: paymentrepo.NewPaymentRepoSQL(readDB, writeDB),
 		reservationRepo: reservationrepo.NewReservationRepoSQL(readDB, writeDB),
 		lendingRepo:     lendingrepo.NewLendingRepoSQL(readDB, writeDB),
 		fineRepo:        finerepo.NewFineRepoSQL(readDB, writeDB),
@@ -137,6 +141,10 @@ func (r *repoSQLImpl) WithTransaction(ctx context.Context, txFunc func(ctx conte
 }
 
 // @candi:repositoryImplementation
+func (r *repoSQLImpl) PaymentRepo() paymentrepo.PaymentRepository {
+	return r.paymentRepo
+}
+
 func (r *repoSQLImpl) ReservationRepo() reservationrepo.ReservationRepository {
 	return r.reservationRepo
 }

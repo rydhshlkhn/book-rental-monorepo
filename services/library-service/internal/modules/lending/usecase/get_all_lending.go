@@ -5,11 +5,13 @@ import (
 
 	"monorepo/services/library-service/internal/modules/lending/domain"
 
+	shareddomain "monorepo/services/library-service/pkg/shared/domain"
+
 	"github.com/golangid/candi/candishared"
 	"github.com/golangid/candi/tracer"
 )
 
-func (uc *lendingUsecaseImpl) GetAllLending(ctx context.Context, filter *domain.FilterLending) (result domain.ResponseLendingList, err error) {
+func (uc *lendingUsecaseImpl) GetAllLending(ctx context.Context, filter *shareddomain.LendingParamGet) (result domain.ResponseLendingList, err error) {
 	trace, ctx := tracer.StartTraceWithContext(ctx, "LendingUsecase:GetAllLending")
 	defer trace.Finish()
 

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"monorepo/services/library-service/internal/modules/lending/domain"
 	mockrepo "monorepo/services/library-service/pkg/mocks/modules/lending/repository"
 	mocksharedrepo "monorepo/services/library-service/pkg/mocks/shared/repository"
 	shareddomain "monorepo/services/library-service/pkg/shared/domain"
@@ -28,7 +27,7 @@ func Test_lendingUsecaseImpl_GetAllLending(t *testing.T) {
 			repoSQL: repoSQL,
 		}
 
-		_, _, err := uc.GetAllLending(context.Background(), &domain.FilterLending{})
+		_, _, err := uc.GetAllLending(context.Background(), &shareddomain.LendingParamGet{})
 		assert.NoError(t, err)
 	})
 
@@ -45,7 +44,7 @@ func Test_lendingUsecaseImpl_GetAllLending(t *testing.T) {
 			repoSQL: repoSQL,
 		}
 
-		_, _, err := uc.GetAllLending(context.Background(), &domain.FilterLending{})
+		_, _, err := uc.GetAllLending(context.Background(), &shareddomain.LendingParamGet{})
 		assert.Error(t, err)
 	})
 }

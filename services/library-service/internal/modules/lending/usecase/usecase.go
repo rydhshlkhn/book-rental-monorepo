@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"monorepo/services/library-service/internal/modules/lending/domain"
+	shareddomain "monorepo/services/library-service/pkg/shared/domain"
 	"monorepo/services/library-service/pkg/shared/repository"
 	"monorepo/services/library-service/pkg/shared/usecase/common"
 
@@ -14,9 +15,9 @@ import (
 
 // LendingUsecase abstraction
 type LendingUsecase interface {
-	GetAllLending(ctx context.Context, filter *domain.FilterLending) (data domain.ResponseLendingList, err error)
+	GetAllLending(ctx context.Context, filter *shareddomain.LendingParamGet) (data domain.ResponseLendingList, err error)
 	GetDetailLending(ctx context.Context, id int) (data domain.ResponseLending, err error)
-	CreateLending(ctx context.Context, data *domain.RequestLending) (res domain.ResponseLending, err error) 
+	CreateLending(ctx context.Context, data *domain.RequestLending) (res domain.ResponseLending, err error)
 	UpdateLending(ctx context.Context, data *domain.RequestLending) (err error)
 	ReturnLending(ctx context.Context, id int) (result domain.ReturnLending, err error)
 	DeleteLending(ctx context.Context, id int) (err error)
@@ -33,9 +34,9 @@ type lendingUsecaseImpl struct {
 func NewLendingUsecase(deps dependency.Dependency) (LendingUsecase, func(sharedUsecase common.Usecase)) {
 	uc := &lendingUsecaseImpl{
 		deps:    deps,
-		repoSQL:   repository.GetSharedRepoSQL(),
+		repoSQL: repository.GetSharedRepoSQL(),
 		// repoMongo: repository.GetSharedRepoMongo(),
-		
+
 	}
 	return uc, func(sharedUsecase common.Usecase) {
 		uc.sharedUsecase = sharedUsecase

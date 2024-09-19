@@ -4,30 +4,29 @@ package repository
 
 import (
 	"context"
-
-	"strings"
+	
 	"time"
+	"strings"
 
-	"monorepo/services/library-service/internal/modules/fine/domain"
+	"monorepo/services/library-service/internal/modules/payment/domain"
 	shareddomain "monorepo/services/library-service/pkg/shared/domain"
 
 	"github.com/golangid/candi/candishared"
 	"github.com/golangid/candi/tracer"
 
 	"monorepo/globalshared"
-
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
-type fineRepoSQL struct {
+type paymentRepoSQL struct {
 	readDB, writeDB *gorm.DB
 	updateTools     *candishared.DBUpdateTools
 }
 
-// NewFineRepoSQL mongo repo constructor
-func NewFineRepoSQL(readDB, writeDB *gorm.DB) FineRepository {
-	return &fineRepoSQL{
+// NewPaymentRepoSQL mongo repo constructor
+func NewPaymentRepoSQL(readDB, writeDB *gorm.DB) PaymentRepository {
+	return &paymentRepoSQL{
 		readDB: readDB, writeDB: writeDB,
 		updateTools: &candishared.DBUpdateTools{
 			KeyExtractorFunc: candishared.DBUpdateGORMExtractorKey, IgnoredFields: []string{"id"},
@@ -35,15 +34,15 @@ func NewFineRepoSQL(readDB, writeDB *gorm.DB) FineRepository {
 	}
 }
 
-func (r *fineRepoSQL) FetchAll(ctx context.Context, filter *domain.FilterFine) (data []shareddomain.Fine, err error) {
-	trace, ctx := tracer.StartTraceWithContext(ctx, "FineRepoSQL:FetchAll")
+func (r *paymentRepoSQL) FetchAll(ctx context.Context, filter *domain.FilterPayment) (data []shareddomain.Transaction, err error) {
+	trace, ctx := tracer.StartTraceWithContext(ctx, "PaymentRepoSQL:FetchAll")
 	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
 
 	if filter.OrderBy == "" {
 		filter.OrderBy = "updated_at"
 	}
 
-	db := r.setFilterFine(globalshared.SetSpanToGorm(ctx, r.readDB), filter).Order(clause.OrderByColumn{
+	db := r.setFilterPayment(globalshared.SetSpanToGorm(ctx, r.readDB), filter).Order(clause.OrderByColumn{
 		Column: clause.Column{Name: filter.OrderBy},
 		Desc:   strings.ToUpper(filter.Sort) == "DESC",
 	})
@@ -54,28 +53,28 @@ func (r *fineRepoSQL) FetchAll(ctx context.Context, filter *domain.FilterFine) (
 	return
 }
 
-func (r *fineRepoSQL) Count(ctx context.Context, filter *domain.FilterFine) (count int) {
-	trace, ctx := tracer.StartTraceWithContext(ctx, "FineRepoSQL:Count")
+func (r *paymentRepoSQL) Count(ctx context.Context, filter *domain.FilterPayment) (count int) {
+	trace, ctx := tracer.StartTraceWithContext(ctx, "PaymentRepoSQL:Count")
 	defer trace.Finish()
 
 	var total int64
-	r.setFilterFine(globalshared.SetSpanToGorm(ctx, r.readDB), filter).Model(&shareddomain.Fine{}).Count(&total)
+	r.setFilterPayment(globalshared.SetSpanToGorm(ctx, r.readDB), filter).Model(&shareddomain.Transaction{}).Count(&total)
 	count = int(total)
-
+	
 	trace.Log("count", count)
 	return
 }
 
-func (r *fineRepoSQL) Find(ctx context.Context, filter *domain.FilterFine) (result shareddomain.Fine, err error) {
-	trace, ctx := tracer.StartTraceWithContext(ctx, "FineRepoSQL:Find")
+func (r *paymentRepoSQL) Find(ctx context.Context, filter *domain.FilterPayment) (result shareddomain.Transaction, err error) {
+	trace, ctx := tracer.StartTraceWithContext(ctx, "PaymentRepoSQL:Find")
 	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
 
-	err = r.setFilterFine(globalshared.SetSpanToGorm(ctx, r.readDB), filter).First(&result).Error
+	err = r.setFilterPayment(globalshared.SetSpanToGorm(ctx, r.readDB), filter).First(&result).Error
 	return
 }
 
-func (r *fineRepoSQL) Save(ctx context.Context, data *shareddomain.Fine, updateOptions ...candishared.DBUpdateOptionFunc) (err error) {
-	trace, ctx := tracer.StartTraceWithContext(ctx, "FineRepoSQL:Save")
+func (r *paymentRepoSQL) Save(ctx context.Context, data *shareddomain.Transaction, updateOptions ...candishared.DBUpdateOptionFunc) (err error) {
+	trace, ctx := tracer.StartTraceWithContext(ctx, "PaymentRepoSQL:Save")
 	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
 
 	db := r.writeDB
@@ -87,27 +86,28 @@ func (r *fineRepoSQL) Save(ctx context.Context, data *shareddomain.Fine, updateO
 		data.CreatedAt = time.Now()
 	}
 	if data.ID == 0 {
-		err = globalshared.SetSpanToGorm(ctx, db).Omit(clause.Associations).Create(data).Error
+		// err = globalshared.SetSpanToGorm(ctx, db).Omit(clause.Associations).Create(data).Error
+		err = globalshared.SetSpanToGorm(ctx, db).Create(data).Error
 	} else {
 		err = globalshared.SetSpanToGorm(ctx, db).Model(data).Omit(clause.Associations).Updates(r.updateTools.ToMap(data, updateOptions...)).Error
 	}
 	return
 }
 
-func (r *fineRepoSQL) Delete(ctx context.Context, filter *domain.FilterFine) (err error) {
-	trace, ctx := tracer.StartTraceWithContext(ctx, "FineRepoSQL:Delete")
+func (r *paymentRepoSQL) Delete(ctx context.Context, filter *domain.FilterPayment) (err error) {
+	trace, ctx := tracer.StartTraceWithContext(ctx, "PaymentRepoSQL:Delete")
 	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
 
 	db := r.writeDB
 	if tx, ok := candishared.GetValueFromContext(ctx, candishared.ContextKeySQLTransaction).(*gorm.DB); ok {
 		db = tx
 	}
-	err = r.setFilterFine(globalshared.SetSpanToGorm(ctx, db), filter).Delete(&shareddomain.Fine{}).Error
+	err = r.setFilterPayment(globalshared.SetSpanToGorm(ctx, db), filter).Delete(&shareddomain.Transaction{}).Error
 	return
 }
 
-func (r *fineRepoSQL) setFilterFine(db *gorm.DB, filter *domain.FilterFine) *gorm.DB {
-
+func (r *paymentRepoSQL) setFilterPayment(db *gorm.DB, filter *domain.FilterPayment) *gorm.DB {
+	
 	if filter.ID != nil {
 		db = db.Where("id = ?", *filter.ID)
 	}

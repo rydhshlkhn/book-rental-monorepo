@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	// @candi:usecaseImport
+	paymentusecase "monorepo/services/library-service/internal/modules/payment/usecase"
 	reservationusecase "monorepo/services/library-service/internal/modules/reservation/usecase"
 	lendingusecase "monorepo/services/library-service/internal/modules/lending/usecase"
 	fineusecase "monorepo/services/library-service/internal/modules/fine/usecase"
@@ -19,6 +20,7 @@ type (
 	// Usecase unit of work for all usecase in modules
 	Usecase interface {
 		// @candi:usecaseMethod
+		Payment() paymentusecase.PaymentUsecase
 		Reservation() reservationusecase.ReservationUsecase
 		Lending() lendingusecase.LendingUsecase
 		Fine() fineusecase.FineUsecase
@@ -27,6 +29,7 @@ type (
 
 	usecaseUow struct {
 		// @candi:usecaseField
+		paymentusecase.PaymentUsecase
 		reservationusecase.ReservationUsecase
 		lendingusecase.LendingUsecase
 		fineusecase.FineUsecase
@@ -45,6 +48,8 @@ func SetSharedUsecase(deps dependency.Dependency) {
 		var setSharedUsecaseFunc func(common.Usecase)
 
 		// @candi:usecaseCommon
+		usecaseInst.PaymentUsecase, setSharedUsecaseFunc = paymentusecase.NewPaymentUsecase(deps)
+		setSharedUsecaseFuncs = append(setSharedUsecaseFuncs, setSharedUsecaseFunc)
 		usecaseInst.ReservationUsecase, setSharedUsecaseFunc = reservationusecase.NewReservationUsecase(deps)
 		setSharedUsecaseFuncs = append(setSharedUsecaseFuncs, setSharedUsecaseFunc)
 		usecaseInst.LendingUsecase, setSharedUsecaseFunc = lendingusecase.NewLendingUsecase(deps)
@@ -67,6 +72,10 @@ func GetSharedUsecase() Usecase {
 }
 
 // @candi:usecaseImplementation
+func (uc *usecaseUow) Payment() paymentusecase.PaymentUsecase {
+	return uc.PaymentUsecase
+}
+
 func (uc *usecaseUow) Reservation() reservationusecase.ReservationUsecase {
 	return uc.ReservationUsecase
 }

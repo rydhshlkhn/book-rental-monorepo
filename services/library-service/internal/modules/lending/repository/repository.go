@@ -5,7 +5,6 @@ package repository
 import (
 	"context"
 
-	"monorepo/services/library-service/internal/modules/lending/domain"
 	shareddomain "monorepo/services/library-service/pkg/shared/domain"
 
 	"github.com/golangid/candi/candishared"
@@ -13,9 +12,9 @@ import (
 
 // LendingRepository abstract interface
 type LendingRepository interface {
-	FetchAll(ctx context.Context, filter *domain.FilterLending) ([]shareddomain.Lending, error)
-	Count(ctx context.Context, filter *domain.FilterLending) int
-	Find(ctx context.Context, filter *domain.FilterLending) (shareddomain.Lending, error)
-	Save(ctx context.Context, data *shareddomain.Lending, updateOptions ...candishared.DBUpdateOptionFunc) <- chan error
-	Delete(ctx context.Context, filter *domain.FilterLending) (err error)
+	FetchAll(ctx context.Context, filter *shareddomain.LendingParamGet) ([]shareddomain.Lending, error)
+	Count(ctx context.Context, filter *shareddomain.LendingParamGet) int
+	Find(ctx context.Context, filter *shareddomain.LendingParamGet) (shareddomain.Lending, error)
+	Save(ctx context.Context, data *shareddomain.Lending, updateOptions ...candishared.DBUpdateOptionFunc) <-chan error
+	Delete(ctx context.Context, filter *shareddomain.LendingParamGet) (err error)
 }

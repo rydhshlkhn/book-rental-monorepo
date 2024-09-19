@@ -11,6 +11,8 @@ import (
 	"monorepo/services/library-service/internal/modules/lending/domain"
 	"monorepo/services/library-service/pkg/shared/usecase"
 
+	shareddomain "monorepo/services/library-service/pkg/shared/domain"
+
 	"github.com/golangid/candi/candihelper"
 	"github.com/golangid/candi/candishared"
 	restserver "github.com/golangid/candi/codebase/app/rest_server"
@@ -67,7 +69,7 @@ func (h *RestHandler) getAllLending(rw http.ResponseWriter, req *http.Request) {
 
 	tokenClaim := candishared.ParseTokenClaimFromContext(ctx) // must using HTTPBearerAuth in middleware for this handler
 
-	var filter domain.FilterLending
+	var filter shareddomain.LendingParamGet
 	if err := candihelper.ParseFromQueryParam(req.URL.Query(), &filter); err != nil {
 		wrapper.NewHTTPResponse(http.StatusBadRequest, "Failed parse filter", err).JSON(rw)
 		return

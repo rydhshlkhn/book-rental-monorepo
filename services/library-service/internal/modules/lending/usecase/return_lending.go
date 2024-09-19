@@ -20,7 +20,7 @@ func (uc *lendingUsecaseImpl) ReturnLending(ctx context.Context, id int) (result
 	trace, ctx := tracer.StartTraceWithContext(ctx, "LendingUsecase:UpdateLending")
 	defer trace.Finish()
 
-	repoFilter := domain.FilterLending{ID: &id}
+	repoFilter := shareddomain.LendingParamGet{ID: &id}
 	existing, err := uc.repoSQL.LendingRepo().Find(ctx, &repoFilter)
 	if err != nil {
 		return
@@ -52,7 +52,7 @@ func (uc *lendingUsecaseImpl) ReturnLending(ctx context.Context, id int) (result
 		// 2. Initiate Snap request
 		req := &snap.Request{
 			TransactionDetails: midtrans.TransactionDetails{
-				OrderID:  fmt.Sprintf("LENDINIG-%v", existing.ID),
+				OrderID:  fmt.Sprintf("%s%v", constant.PREFIX_LENDING, existing.ID),
 				GrossAmt: int64(amount),
 			},
 			CreditCard: &snap.CreditCardDetails{

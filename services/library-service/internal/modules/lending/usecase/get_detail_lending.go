@@ -5,6 +5,8 @@ import (
 
 	"monorepo/services/library-service/internal/modules/lending/domain"
 
+	shareddomain "monorepo/services/library-service/pkg/shared/domain"
+
 	"github.com/golangid/candi/tracer"
 )
 
@@ -12,7 +14,7 @@ func (uc *lendingUsecaseImpl) GetDetailLending(ctx context.Context, id int) (res
 	trace, ctx := tracer.StartTraceWithContext(ctx, "LendingUsecase:GetDetailLending")
 	defer trace.Finish()
 
-	repoFilter := domain.FilterLending{ID: &id}
+	repoFilter := shareddomain.LendingParamGet{ID: &id}
 	data, err := uc.repoSQL.LendingRepo().Find(ctx, &repoFilter)
 	if err != nil {
 		return result, err

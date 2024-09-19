@@ -8,6 +8,7 @@ type Environment struct {
 	// ExampleHost string `env:"EXAMPLE_HOST"`
 	AuthServiceKey  string `env:"AUTH_SERVICE_KEY"`
 	AuthServiceHost string `env:"AUTH_SERVICE_HOST"`
+	MidtransServerKey string `env:"MIDTRANS_SERVER_KEY"`
 	
 }
 

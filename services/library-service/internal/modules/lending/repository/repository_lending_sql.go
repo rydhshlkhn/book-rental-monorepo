@@ -4,17 +4,17 @@ package repository
 
 import (
 	"context"
-	
-	"time"
-	"strings"
 
-	"monorepo/services/library-service/internal/modules/lending/domain"
+	"strings"
+	"time"
+
 	shareddomain "monorepo/services/library-service/pkg/shared/domain"
 
 	"github.com/golangid/candi/candishared"
 	"github.com/golangid/candi/tracer"
 
 	"monorepo/globalshared"
+
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -34,7 +34,7 @@ func NewLendingRepoSQL(readDB, writeDB *gorm.DB) LendingRepository {
 	}
 }
 
-func (r *lendingRepoSQL) FetchAll(ctx context.Context, filter *domain.FilterLending) (data []shareddomain.Lending, err error) {
+func (r *lendingRepoSQL) FetchAll(ctx context.Context, filter *shareddomain.LendingParamGet) (data []shareddomain.Lending, err error) {
 	trace, ctx := tracer.StartTraceWithContext(ctx, "LendingRepoSQL:FetchAll")
 	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
 
@@ -53,19 +53,19 @@ func (r *lendingRepoSQL) FetchAll(ctx context.Context, filter *domain.FilterLend
 	return
 }
 
-func (r *lendingRepoSQL) Count(ctx context.Context, filter *domain.FilterLending) (count int) {
+func (r *lendingRepoSQL) Count(ctx context.Context, filter *shareddomain.LendingParamGet) (count int) {
 	trace, ctx := tracer.StartTraceWithContext(ctx, "LendingRepoSQL:Count")
 	defer trace.Finish()
 
 	var total int64
 	r.setFilterLending(globalshared.SetSpanToGorm(ctx, r.readDB), filter).Model(&shareddomain.Lending{}).Count(&total)
 	count = int(total)
-	
+
 	trace.Log("count", count)
 	return
 }
 
-func (r *lendingRepoSQL) Find(ctx context.Context, filter *domain.FilterLending) (result shareddomain.Lending, err error) {
+func (r *lendingRepoSQL) Find(ctx context.Context, filter *shareddomain.LendingParamGet) (result shareddomain.Lending, err error) {
 	trace, ctx := tracer.StartTraceWithContext(ctx, "LendingRepoSQL:Find")
 	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
 
@@ -73,7 +73,7 @@ func (r *lendingRepoSQL) Find(ctx context.Context, filter *domain.FilterLending)
 	return
 }
 
-func (r *lendingRepoSQL) Save(ctx context.Context, data *shareddomain.Lending, updateOptions ...candishared.DBUpdateOptionFunc) <- chan error {
+func (r *lendingRepoSQL) Save(ctx context.Context, data *shareddomain.Lending, updateOptions ...candishared.DBUpdateOptionFunc) <-chan error {
 	output := make(chan error)
 
 	go tracer.WithTracerFunc(ctx, "LendingRepoSQL:Save", func(ctx context.Context, _ tracer.Tracer) {
@@ -88,13 +88,13 @@ func (r *lendingRepoSQL) Save(ctx context.Context, data *shareddomain.Lending, u
 			data.CreatedAt = time.Now()
 		}
 		if data.ID == 0 {
-			output <-globalshared.SetSpanToGorm(ctx, db).Omit(clause.Associations).Create(data).Error
+			output <- globalshared.SetSpanToGorm(ctx, db).Omit(clause.Associations).Create(data).Error
 		} else {
-			output <-globalshared.SetSpanToGorm(ctx, db).Model(data).Omit(clause.Associations).Updates(r.updateTools.ToMap(data, updateOptions...)).Error
+			output <- globalshared.SetSpanToGorm(ctx, db).Model(data).Omit(clause.Associations).Updates(r.updateTools.ToMap(data, updateOptions...)).Error
 		}
 	})
 
-	return  output
+	return output
 
 	// trace, ctx := tracer.StartTraceWithContext(ctx, "LendingRepoSQL:Save")
 	// defer func() { trace.Finish(tracer.FinishWithError(err)) }()
@@ -115,7 +115,7 @@ func (r *lendingRepoSQL) Save(ctx context.Context, data *shareddomain.Lending, u
 	// return
 }
 
-func (r *lendingRepoSQL) Delete(ctx context.Context, filter *domain.FilterLending) (err error) {
+func (r *lendingRepoSQL) Delete(ctx context.Context, filter *shareddomain.LendingParamGet) (err error) {
 	trace, ctx := tracer.StartTraceWithContext(ctx, "LendingRepoSQL:Delete")
 	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
 
@@ -127,8 +127,8 @@ func (r *lendingRepoSQL) Delete(ctx context.Context, filter *domain.FilterLendin
 	return
 }
 
-func (r *lendingRepoSQL) setFilterLending(db *gorm.DB, filter *domain.FilterLending) *gorm.DB {
-	
+func (r *lendingRepoSQL) setFilterLending(db *gorm.DB, filter *shareddomain.LendingParamGet) *gorm.DB {
+
 	if filter.ID != nil {
 		db = db.Where("id = ?", *filter.ID)
 	}
