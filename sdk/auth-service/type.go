@@ -6,7 +6,7 @@ type PayloadGenerateToken struct {
 	DeviceID string
 	UserID   string
 	Username string
-	Role string
+	Role     string
 }
 
 type ResponseGenerateToken struct {
@@ -22,4 +22,11 @@ type ResponseClaim struct {
 		Username string `json:"username"`
 	} `json:"user"`
 	Alg string `json:"-"`
+}
+
+type Response struct {
+	Success bool           `json:"success"`
+	Data    *ResponseClaim `json:"data"`
+	Message string         `json:"message"`
+	Code    int            `json:"code"`
 }

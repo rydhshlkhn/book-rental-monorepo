@@ -16,11 +16,11 @@ import (
 
 // UserUsecase abstraction
 type UserUsecase interface {
-	GetAllUser(ctx context.Context, filter *domain.FilterUser) (data domain.ResponseUserList, err error)
+	// GetAllUser(ctx context.Context, filter *domain.FilterUser) (data domain.ResponseUserList, err error)
 	GetDetailUser(ctx context.Context, id int) (data domain.ResponseUser, err error)
-	CreateUser(ctx context.Context, data *domain.RequestUser) (res domain.ResponseUser, err error)
-	UpdateUser(ctx context.Context, data *domain.RequestUser) (err error)
-	DeleteUser(ctx context.Context, id int) (err error)
+	// CreateUser(ctx context.Context, data *domain.RequestUser) (res domain.ResponseUser, err error)
+	// UpdateUser(ctx context.Context, data *domain.RequestUser) (err error)
+	// DeleteUser(ctx context.Context, id int) (err error)
 	Register(ctx context.Context, data *domain.RequestUser) (res domain.ResponseUser, err error)
 	Login(ctx context.Context, data *domain.RequestLoginUser) (res domain.ResponseUser, err error)
 	ValidateToken(ctx context.Context, tokenString string) (claim *candishared.TokenClaim, err error)

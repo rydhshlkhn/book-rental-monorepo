@@ -13,9 +13,6 @@ import (
 
 // TokenRepository abstract interface
 type TokenRepository interface {
-	FetchAll(ctx context.Context, filter *domain.FilterToken) ([]shareddomain.Token, error)
-	Count(ctx context.Context, filter *domain.FilterToken) int
 	Find(ctx context.Context, filter *domain.FilterToken) (shareddomain.Token, error)
 	Save(ctx context.Context, data *shareddomain.Token, updateOptions ...candishared.DBUpdateOptionFunc) error
-	Delete(ctx context.Context, filter *domain.FilterToken) (err error)
 }

@@ -5,7 +5,6 @@ package repository
 import (
 	"context"
 
-	"strings"
 	"time"
 
 	"monorepo/services/auth-service/internal/modules/token/domain"
@@ -33,37 +32,6 @@ func NewTokenRepoSQL(readDB, writeDB *gorm.DB) TokenRepository {
 			KeyExtractorFunc: candishared.DBUpdateGORMExtractorKey, IgnoredFields: []string{"id"},
 		},
 	}
-}
-
-func (r *tokenRepoSQL) FetchAll(ctx context.Context, filter *domain.FilterToken) (data []shareddomain.Token, err error) {
-	trace, ctx := tracer.StartTraceWithContext(ctx, "TokenRepoSQL:FetchAll")
-	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
-
-	if filter.OrderBy == "" {
-		filter.OrderBy = "updated_at"
-	}
-
-	db := r.setFilterToken(globalshared.SetSpanToGorm(ctx, r.readDB), filter).Order(clause.OrderByColumn{
-		Column: clause.Column{Name: filter.OrderBy},
-		Desc:   strings.ToUpper(filter.Sort) == "DESC",
-	})
-	if filter.Limit > 0 || !filter.ShowAll {
-		db = db.Limit(filter.Limit).Offset(filter.CalculateOffset())
-	}
-	err = db.Find(&data).Error
-	return
-}
-
-func (r *tokenRepoSQL) Count(ctx context.Context, filter *domain.FilterToken) (count int) {
-	trace, ctx := tracer.StartTraceWithContext(ctx, "TokenRepoSQL:Count")
-	defer trace.Finish()
-
-	var total int64
-	r.setFilterToken(globalshared.SetSpanToGorm(ctx, r.readDB), filter).Model(&shareddomain.Token{}).Count(&total)
-	count = int(total)
-
-	trace.Log("count", count)
-	return
 }
 
 func (r *tokenRepoSQL) Find(ctx context.Context, filter *domain.FilterToken) (result shareddomain.Token, err error) {
@@ -94,17 +62,9 @@ func (r *tokenRepoSQL) Save(ctx context.Context, data *shareddomain.Token, updat
 	return
 }
 
-func (r *tokenRepoSQL) Delete(ctx context.Context, filter *domain.FilterToken) (err error) {
-	trace, ctx := tracer.StartTraceWithContext(ctx, "TokenRepoSQL:Delete")
-	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
-
-	db := r.writeDB
-	if tx, ok := candishared.GetValueFromContext(ctx, candishared.ContextKeySQLTransaction).(*gorm.DB); ok {
-		db = tx
-	}
-	err = r.setFilterToken(globalshared.SetSpanToGorm(ctx, db), filter).Delete(&shareddomain.Token{}).Error
-	return
-}
+// func (r *tokenRepoSQL) Delete(ctx context.Context, filter *domain.FilterToken) (err error) {
+// 	trace, ctx := tracer.StartTraceWithContext(ctx, "TokenRepoSQL:Delete")
+// 	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
 
 func (r *tokenRepoSQL) setFilterToken(db *gorm.DB, filter *domain.FilterToken) *gorm.DB {
 

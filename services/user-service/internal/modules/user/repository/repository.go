@@ -13,9 +13,9 @@ import (
 
 // UserRepository abstract interface
 type UserRepository interface {
-	FetchAll(ctx context.Context, filter *domain.FilterUser) ([]shareddomain.User, error)
-	Count(ctx context.Context, filter *domain.FilterUser) int
+	// FetchAll(ctx context.Context, filter *domain.FilterUser) ([]shareddomain.User, error)
+	// Count(ctx context.Context, filter *domain.FilterUser) int
 	Find(ctx context.Context, filter *domain.FilterUser) (shareddomain.User, error)
 	Save(ctx context.Context, data *shareddomain.User, updateOptions ...candishared.DBUpdateOptionFunc) error
-	Delete(ctx context.Context, filter *domain.FilterUser) (err error)
+	// Delete(ctx context.Context, filter *domain.FilterUser) (err error)
 }

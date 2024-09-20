@@ -4,9 +4,8 @@ package repository
 
 import (
 	"context"
-	
+
 	"time"
-	"strings"
 
 	"monorepo/services/user-service/internal/modules/user/domain"
 	shareddomain "monorepo/services/user-service/pkg/shared/domain"
@@ -15,6 +14,7 @@ import (
 	"github.com/golangid/candi/tracer"
 
 	"monorepo/globalshared"
+
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -32,37 +32,6 @@ func NewUserRepoSQL(readDB, writeDB *gorm.DB) UserRepository {
 			KeyExtractorFunc: candishared.DBUpdateGORMExtractorKey, IgnoredFields: []string{"id"},
 		},
 	}
-}
-
-func (r *userRepoSQL) FetchAll(ctx context.Context, filter *domain.FilterUser) (data []shareddomain.User, err error) {
-	trace, ctx := tracer.StartTraceWithContext(ctx, "UserRepoSQL:FetchAll")
-	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
-
-	if filter.OrderBy == "" {
-		filter.OrderBy = "updated_at"
-	}
-
-	db := r.setFilterUser(globalshared.SetSpanToGorm(ctx, r.readDB), filter).Order(clause.OrderByColumn{
-		Column: clause.Column{Name: filter.OrderBy},
-		Desc:   strings.ToUpper(filter.Sort) == "DESC",
-	})
-	if filter.Limit > 0 || !filter.ShowAll {
-		db = db.Limit(filter.Limit).Offset(filter.CalculateOffset())
-	}
-	err = db.Find(&data).Error
-	return
-}
-
-func (r *userRepoSQL) Count(ctx context.Context, filter *domain.FilterUser) (count int) {
-	trace, ctx := tracer.StartTraceWithContext(ctx, "UserRepoSQL:Count")
-	defer trace.Finish()
-
-	var total int64
-	r.setFilterUser(globalshared.SetSpanToGorm(ctx, r.readDB), filter).Model(&shareddomain.User{}).Count(&total)
-	count = int(total)
-	
-	trace.Log("count", count)
-	return
 }
 
 func (r *userRepoSQL) Find(ctx context.Context, filter *domain.FilterUser) (result shareddomain.User, err error) {
@@ -90,18 +59,6 @@ func (r *userRepoSQL) Save(ctx context.Context, data *shareddomain.User, updateO
 	} else {
 		err = globalshared.SetSpanToGorm(ctx, db).Model(data).Omit(clause.Associations).Updates(r.updateTools.ToMap(data, updateOptions...)).Error
 	}
-	return
-}
-
-func (r *userRepoSQL) Delete(ctx context.Context, filter *domain.FilterUser) (err error) {
-	trace, ctx := tracer.StartTraceWithContext(ctx, "UserRepoSQL:Delete")
-	defer func() { trace.Finish(tracer.FinishWithError(err)) }()
-
-	db := r.writeDB
-	if tx, ok := candishared.GetValueFromContext(ctx, candishared.ContextKeySQLTransaction).(*gorm.DB); ok {
-		db = tx
-	}
-	err = r.setFilterUser(globalshared.SetSpanToGorm(ctx, db), filter).Delete(&shareddomain.User{}).Error
 	return
 }
 

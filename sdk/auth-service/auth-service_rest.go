@@ -66,7 +66,7 @@ func (us *authserviceRESTImpl) GenerateToken(ctx context.Context, req PayloadGen
 	return response.Data, statusCode, nil
 }
 
-func (us *authserviceRESTImpl) ValidateToken(ctx context.Context, tokenStrnig string) (claim *ResponseClaim, code int, err error) {
+func (us *authserviceRESTImpl) ValidateToken(ctx context.Context, tokenStrnig string) (res *Response, code int, err error) {
 	trace, ctx := tracer.StartTraceWithContext(ctx, "AuthServiceSDK:GenerateToken")
 	defer trace.Finish()
 
@@ -76,19 +76,14 @@ func (us *authserviceRESTImpl) ValidateToken(ctx context.Context, tokenStrnig st
 	}
 
 	uri := fmt.Sprintf("http://localhost:8001/v1/token/validate?token=%s", tokenStrnig)
-	body, statusCode, err := candiutils.NewHTTPRequest(
+	body, code, err := candiutils.NewHTTPRequest(
 		candiutils.HTTPRequestSetHTTPErrorCodeThreshold(http.StatusBadRequest),
 	).Do(ctx, http.MethodGet, uri, nil, headers)
-	if err != nil {
-		trace.SetError(err)
-		return claim, code, err
-	}
+	// if err != nil {
+	// 	trace.SetError(err)
+	// 	return claim, code, err
+	// }
 
-	var response struct {
-		Success bool           `json:"success"`
-		Data    *ResponseClaim `json:"data"`
-		Message string         `json:"message"`
-	}
-	json.Unmarshal(body, &response)
-	return response.Data, statusCode, nil
+	json.Unmarshal(body, &res)
+	return 
 }
