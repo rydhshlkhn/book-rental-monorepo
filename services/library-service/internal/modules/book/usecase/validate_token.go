@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/golangid/candi/candishared"
@@ -15,7 +14,7 @@ func (uc *bookUsecaseImpl) ValidateToken(ctx context.Context, tokenString string
 
 	resp, _, err := uc.sdk.Authservice().ValidateToken(ctx, tokenString)
 	if err != nil {
-		err = fmt.Errorf("%s", resp.Message)
+		// err = fmt.Errorf("%s", resp.Message)
 		return
 	}
 	claim = new(candishared.TokenClaim)

@@ -9,7 +9,7 @@
      "Year": 2024,
      "IsMonorepo": true,
      "RestHandler": true,
-     "GRPCHandler": false,
+     "GRPCHandler": true,
      "GraphQLHandler": false,
      "FiberRestHandler": false,
      "KafkaHandler": false,

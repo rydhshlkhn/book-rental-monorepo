@@ -3,6 +3,7 @@ package authservice
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -72,7 +73,7 @@ func (us *authserviceRESTImpl) ValidateToken(ctx context.Context, tokenStrnig st
 
 	headers := map[string]string{
 		candihelper.HeaderContentType:   candihelper.HeaderMIMEApplicationJSON,
-		candihelper.HeaderAuthorization: fmt.Sprintf("Basic %s", us.authKey),
+		candihelper.HeaderAuthorization: us.authKey,
 	}
 
 	uri := fmt.Sprintf("http://localhost:8001/v1/token/validate?token=%s", tokenStrnig)
@@ -85,5 +86,8 @@ func (us *authserviceRESTImpl) ValidateToken(ctx context.Context, tokenStrnig st
 	// }
 
 	json.Unmarshal(body, &res)
+	if err != nil {
+		err = errors.New(res.Message)
+	}
 	return 
 }

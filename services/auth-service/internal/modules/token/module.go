@@ -4,7 +4,7 @@ package token
 
 import (
 	// "monorepo/services/auth-service/internal/modules/token/delivery/graphqlhandler"
-	// "monorepo/services/auth-service/internal/modules/token/delivery/grpchandler"
+	"monorepo/services/auth-service/internal/modules/token/delivery/grpchandler"
 	"monorepo/services/auth-service/internal/modules/token/delivery/resthandler"
 	// "monorepo/services/auth-service/internal/modules/token/delivery/workerhandler"
 	"monorepo/services/auth-service/pkg/shared/usecase"
@@ -32,7 +32,7 @@ type Module struct {
 func NewModule(deps dependency.Dependency) *Module {
 	var mod Module
 	mod.restHandler = resthandler.NewRestHandler(usecase.GetSharedUsecase(), deps)
-	// mod.grpcHandler = grpchandler.NewGRPCHandler(usecase.GetSharedUsecase(), deps)
+	mod.grpcHandler = grpchandler.NewGRPCHandler(usecase.GetSharedUsecase(), deps)
 	// mod.graphqlHandler = graphqlhandler.NewGraphQLHandler(usecase.GetSharedUsecase(), deps)
 
 	mod.workerHandlers = map[types.Worker]interfaces.WorkerHandler{

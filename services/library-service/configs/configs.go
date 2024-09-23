@@ -4,6 +4,7 @@ package configs
 
 import (
 	"context"
+	"fmt"
 
 	"monorepo/sdk"
 	authservice "monorepo/sdk/auth-service"
@@ -42,7 +43,8 @@ func LoadServiceConfigs(baseCfg *config.Config) (deps dependency.Dependency) {
 		sqlDeps := database.InitSQLDatabase()
 		// mongoDeps := database.InitMongoDB(ctx)
 
-		authService := authservice.NewAuthserviceServiceREST(sharedEnv.AuthServiceHost, sharedEnv.AuthServiceKey)
+		authService := authservice.NewAuthserviceServiceGRPC(sharedEnv.AuthServiceHost, fmt.Sprintf("Basic %s", sharedEnv.AuthServiceKey))
+		// authService := authservice.NewAuthserviceServiceREST(sharedEnv.AuthServiceHost, fmt.Sprintf("Basic %s", sharedEnv.AuthServiceKey))
 		sdk.SetGlobalSDK(
 			// init service client sdk
 			sdk.SetAuthservice(authService),
