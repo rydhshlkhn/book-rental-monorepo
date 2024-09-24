@@ -86,7 +86,7 @@ func LoadServiceConfigs(baseCfg *config.Config) (deps dependency.Dependency) {
 	usecase.SetSharedUsecase(deps)
 
 	deps.SetMiddleware(middleware.NewMiddlewareWithOption(
-		middleware.SetTokenValidator(usecase.GetSharedUsecase().Book()),
+		middleware.SetTokenValidator(usecase.GetSharedUsecase().Auth()),
 		middleware.SetACLPermissionChecker(&shared.DefaultMiddleware{}),
 		middleware.SetUserIDExtractor(func(tokenClaim *candishared.TokenClaim) (userID string) {
 			return tokenClaim.Subject

@@ -16,6 +16,7 @@ import (
 
 // BookUsecase abstraction
 type BookUsecase interface {
+	Asdf(ctx context.Context, req *domain.RequestAsdf) (resp domain.ResponseAsdf, err error)
 	GetAllBook(ctx context.Context, filter *domain.FilterBook) (data domain.ResponseBookList, err error)
 	GetDetailBook(ctx context.Context, id int) (data domain.ResponseBook, err error)
 	CreateBook(ctx context.Context, data *domain.RequestBook) (res domain.ResponseBook, err error)

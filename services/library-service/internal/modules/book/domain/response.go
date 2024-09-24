@@ -84,3 +84,7 @@ func (r *ResponseBook) Serialize(source *shareddomain.Book) {
 	r.UpdatedAt = source.UpdatedAt.Format(time.RFC3339)
 	r.BookItems = bookItems
 }
+
+// ResponseAsdf model
+type ResponseAsdf struct {
+}

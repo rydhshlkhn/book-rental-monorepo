@@ -1,0 +1,54 @@
+syntax="proto3";
+package auth;
+option go_package = "monorepo/services/library-service/api/proto/auth";
+
+service AuthHandler {
+	rpc GetAllAuth(GetAllAuthRequest) returns (GetAllAuthResponse);
+	rpc GetDetailAuth(GetDetailAuthRequest) returns (AuthModel);
+	rpc CreateAuth(RequestAuthModel) returns (AuthModel);
+	rpc UpdateAuth(RequestAuthModel) returns (BaseResponse);
+	rpc DeleteAuth(RequestAuthModel) returns (BaseResponse);
+}
+
+message Meta {
+	int64 limit=1;
+	int64 page=2;
+	int64 totalRecords=3;
+	int64 totalPages=4;
+}
+
+message GetAllAuthRequest {
+	int64 limit=1;
+	int64 page=2;
+	string search=3;
+	string orderBy=4;
+	string sort=5;
+	bool showAll=6;
+	string startDate=7;
+	string endDate=8;
+}
+
+message GetAllAuthResponse {
+	Meta meta=1;
+	repeated AuthModel data=2;
+}
+
+message GetDetailAuthRequest {
+	int64 id=1;
+}
+
+message RequestAuthModel {
+	int64 id=1;
+	string field=2;
+}
+
+message AuthModel {
+	int64 id=1;
+	string field=2;
+	string createdAt=3;
+	string updatedAt=4;
+}
+
+message BaseResponse {
+	string message=1;
+}

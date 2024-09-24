@@ -6,11 +6,12 @@ import (
 	"sync"
 
 	// @candi:usecaseImport
+	authusecase "monorepo/services/library-service/internal/modules/auth/usecase"
+	bookusecase "monorepo/services/library-service/internal/modules/book/usecase"
+	fineusecase "monorepo/services/library-service/internal/modules/fine/usecase"
+	lendingusecase "monorepo/services/library-service/internal/modules/lending/usecase"
 	paymentusecase "monorepo/services/library-service/internal/modules/payment/usecase"
 	reservationusecase "monorepo/services/library-service/internal/modules/reservation/usecase"
-	lendingusecase "monorepo/services/library-service/internal/modules/lending/usecase"
-	fineusecase "monorepo/services/library-service/internal/modules/fine/usecase"
-	bookusecase "monorepo/services/library-service/internal/modules/book/usecase"
 	"monorepo/services/library-service/pkg/shared/usecase/common"
 
 	"github.com/golangid/candi/codebase/factory/dependency"
@@ -20,6 +21,7 @@ type (
 	// Usecase unit of work for all usecase in modules
 	Usecase interface {
 		// @candi:usecaseMethod
+		Auth() authusecase.AuthUsecase
 		Payment() paymentusecase.PaymentUsecase
 		Reservation() reservationusecase.ReservationUsecase
 		Lending() lendingusecase.LendingUsecase
@@ -29,6 +31,7 @@ type (
 
 	usecaseUow struct {
 		// @candi:usecaseField
+		authusecase.AuthUsecase
 		paymentusecase.PaymentUsecase
 		reservationusecase.ReservationUsecase
 		lendingusecase.LendingUsecase
@@ -48,6 +51,10 @@ func SetSharedUsecase(deps dependency.Dependency) {
 		var setSharedUsecaseFunc func(common.Usecase)
 
 		// @candi:usecaseCommon
+		usecaseInst.AuthUsecase, setSharedUsecaseFunc = authusecase.NewAuthUsecase(deps)
+		setSharedUsecaseFuncs = append(setSharedUsecaseFuncs, setSharedUsecaseFunc)
+		usecaseInst.AuthUsecase, setSharedUsecaseFunc = authusecase.NewAuthUsecase(deps)
+		setSharedUsecaseFuncs = append(setSharedUsecaseFuncs, setSharedUsecaseFunc)
 		usecaseInst.PaymentUsecase, setSharedUsecaseFunc = paymentusecase.NewPaymentUsecase(deps)
 		setSharedUsecaseFuncs = append(setSharedUsecaseFuncs, setSharedUsecaseFunc)
 		usecaseInst.ReservationUsecase, setSharedUsecaseFunc = reservationusecase.NewReservationUsecase(deps)
@@ -72,6 +79,10 @@ func GetSharedUsecase() Usecase {
 }
 
 // @candi:usecaseImplementation
+func (uc *usecaseUow) Auth() authusecase.AuthUsecase {
+	return uc.AuthUsecase
+}
+
 func (uc *usecaseUow) Payment() paymentusecase.PaymentUsecase {
 	return uc.PaymentUsecase
 }
@@ -91,4 +102,3 @@ func (uc *usecaseUow) Fine() fineusecase.FineUsecase {
 func (uc *usecaseUow) Book() bookusecase.BookUsecase {
 	return uc.BookUsecase
 }
-

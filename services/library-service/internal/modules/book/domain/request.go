@@ -74,3 +74,7 @@ func (r *RequestBook) Deserialize() (res shareddomain.Book) {
 	res.BookItems = bookItems
 	return
 }
+
+// RequestAsdf model
+type RequestAsdf struct {
+}
