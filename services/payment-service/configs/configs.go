@@ -4,15 +4,12 @@ package configs
 
 import (
 	"context"
-	"fmt"
 
+	"monorepo/services/payment-service/api"
 	"monorepo/sdk"
-	authservice "monorepo/sdk/auth-service"
-	paymentservice "monorepo/sdk/payment-service"
-	"monorepo/services/library-service/api"
-	"monorepo/services/library-service/pkg/shared"
-	"monorepo/services/library-service/pkg/shared/repository"
-	"monorepo/services/library-service/pkg/shared/usecase"
+	"monorepo/services/payment-service/pkg/shared"
+	"monorepo/services/payment-service/pkg/shared/repository"
+	"monorepo/services/payment-service/pkg/shared/usecase"
 
 	"github.com/golangid/candi/broker"
 	"github.com/golangid/candi/candihelper"
@@ -22,7 +19,7 @@ import (
 	"github.com/golangid/candi/codebase/interfaces"
 	"github.com/golangid/candi/config"
 	"github.com/golangid/candi/config/database"
-
+	
 	"github.com/golangid/candi/logger"
 	"github.com/golangid/candi/middleware"
 	"github.com/golangid/candi/tracer"
@@ -44,21 +41,16 @@ func LoadServiceConfigs(baseCfg *config.Config) (deps dependency.Dependency) {
 		sqlDeps := database.InitSQLDatabase()
 		// mongoDeps := database.InitMongoDB(ctx)
 
-		authService := authservice.NewAuthserviceServiceGRPC(sharedEnv.AuthServiceHost, fmt.Sprintf("Basic %s", sharedEnv.AuthServiceKey))
-		paymentService := paymentservice.NewPaymentserviceServiceREST(sharedEnv.PaymentServiceHost, fmt.Sprintf("Basic %s", sharedEnv.PaymentServiceKey))
-		// authService := authservice.NewAuthserviceServiceREST(sharedEnv.AuthServiceHost, fmt.Sprintf("Basic %s", sharedEnv.AuthServiceKey))
 		sdk.SetGlobalSDK(
 			// init service client sdk
-			sdk.SetAuthservice(authService),
-			sdk.SetPaymentservice(paymentService),
 		)
 
 		locker := &candiutils.NoopLocker{}
 
 		brokerDeps := broker.InitBrokers(
-		broker.NewKafkaBroker(),
-		// broker.NewRabbitMQBroker(),
-		// broker.NewRedisBroker(redisDeps.WritePool()),
+			broker.NewKafkaBroker(),
+			// broker.NewRabbitMQBroker(),
+			// broker.NewRedisBroker(redisDeps.WritePool()),
 		)
 
 		validatorDeps := validator.NewValidator()
@@ -89,7 +81,7 @@ func LoadServiceConfigs(baseCfg *config.Config) (deps dependency.Dependency) {
 	usecase.SetSharedUsecase(deps)
 
 	deps.SetMiddleware(middleware.NewMiddlewareWithOption(
-		middleware.SetTokenValidator(usecase.GetSharedUsecase().Auth()),
+		middleware.SetTokenValidator(&shared.DefaultMiddleware{}),
 		middleware.SetACLPermissionChecker(&shared.DefaultMiddleware{}),
 		middleware.SetUserIDExtractor(func(tokenClaim *candishared.TokenClaim) (userID string) {
 			return tokenClaim.Subject

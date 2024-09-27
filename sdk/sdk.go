@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	// @candi:serviceImport
+	"monorepo/sdk/payment-service"
 	"monorepo/sdk/library-service"
 	"monorepo/sdk/book-service"
 	"monorepo/sdk/auth-service"
@@ -38,6 +39,13 @@ func GetSDK() SDK {
 
 // @candi:construct
 
+// SetPaymentservice option func
+func SetPaymentservice(paymentservice paymentservice.Paymentservice) Option {
+	return func(s *sdkInstance) {
+		s.paymentservice = paymentservice
+	}
+}
+
 // SetLibraryservice option func
 func SetLibraryservice(libraryservice libraryservice.Libraryservice) Option {
 	return func(s *sdkInstance) {
@@ -69,6 +77,7 @@ func SetUserservice(userservice userservice.Userservice) Option {
 // SDK instance abstraction
 type SDK interface {
 	// @candi:serviceMethod
+	Paymentservice() paymentservice.Paymentservice
 	Libraryservice() libraryservice.Libraryservice
 	Bookservice() bookservice.Bookservice
 	Authservice() authservice.Authservice
@@ -78,6 +87,7 @@ type SDK interface {
 // sdkInstance implementation
 type sdkInstance struct {
 	// @candi:serviceField
+	paymentservice	paymentservice.Paymentservice
 	libraryservice	libraryservice.Libraryservice
 	bookservice	bookservice.Bookservice
 	authservice	authservice.Authservice
@@ -85,6 +95,9 @@ type sdkInstance struct {
 }
 
 // @candi:instanceMethod
+func (s *sdkInstance) Paymentservice() paymentservice.Paymentservice {
+	return s.paymentservice
+}
 func (s *sdkInstance) Libraryservice() libraryservice.Libraryservice {
 	return s.libraryservice
 }

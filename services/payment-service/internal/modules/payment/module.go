@@ -3,11 +3,11 @@
 package payment
 
 import (
-	// "monorepo/services/library-service/internal/modules/payment/delivery/graphqlhandler"
-	// "monorepo/services/library-service/internal/modules/payment/delivery/grpchandler"
-	"monorepo/services/library-service/internal/modules/payment/delivery/resthandler"
-	"monorepo/services/library-service/internal/modules/payment/delivery/workerhandler"
-	"monorepo/services/library-service/pkg/shared/usecase"
+	// "monorepo/services/payment-service/internal/modules/payment/delivery/graphqlhandler"
+	// "monorepo/services/payment-service/internal/modules/payment/delivery/grpchandler"
+	"monorepo/services/payment-service/internal/modules/payment/delivery/resthandler"
+	// "monorepo/services/payment-service/internal/modules/payment/delivery/workerhandler"
+	"monorepo/services/payment-service/pkg/shared/usecase"
 
 	"github.com/golangid/candi/codebase/factory/dependency"
 	"github.com/golangid/candi/codebase/factory/types"
@@ -36,7 +36,7 @@ func NewModule(deps dependency.Dependency) *Module {
 	// mod.graphqlHandler = graphqlhandler.NewGraphQLHandler(usecase.GetSharedUsecase(), deps)
 
 	mod.workerHandlers = map[types.Worker]interfaces.WorkerHandler{
-		types.Kafka:           workerhandler.NewKafkaHandler(usecase.GetSharedUsecase(), deps),
+		// types.Kafka:           workerhandler.NewKafkaHandler(usecase.GetSharedUsecase(), deps),
 		// types.Scheduler:       workerhandler.NewCronHandler(usecase.GetSharedUsecase(), deps),
 		// types.RedisSubscriber: workerhandler.NewRedisHandler(usecase.GetSharedUsecase(), deps),
 		// types.TaskQueue:       workerhandler.NewTaskQueueHandler(usecase.GetSharedUsecase(), deps),

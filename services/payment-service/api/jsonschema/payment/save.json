@@ -1,0 +1,108 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"title": "JSON Schema for save",
+	"type": "object",
+	"properties": {
+		"va_numbers": {
+		  "type": "array",
+		  "items": {
+			"type": "object",
+			"properties": {
+			  "va_number": {
+				"type": "string",
+				"maxLength": 50
+			  },
+			  "bank": {
+				"type": "string",
+				"maxLength": 50
+			  }
+			},
+			"required": ["va_number", "bank"]
+		  }
+		},
+		"transaction_time": {
+		  "type": "string",
+		  "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+		},
+		"transaction_status": {
+		  "type": "string",
+		  "maxLength": 50
+		},
+		"transaction_id": {
+		  "type": "string",
+		  "maxLength": 100
+		},
+		"status_message": {
+		  "type": "string",
+		  "maxLength": 255
+		},
+		"status_code": {
+		  "type": "string",
+		  "maxLength": 10
+		},
+		"signature_key": {
+		  "type": "string"
+		},
+		"settlement_time": {
+		  "type": "string",
+		  "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+		},
+		"payment_type": {
+		  "type": "string",
+		  "maxLength": 50
+		},
+		"payment_amounts": {
+		  "type": "array",
+		  "items": {
+			"type": "object",
+			"properties": {
+			  "paid_at": {
+				"type": "string",
+				"pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+			  },
+			  "amount": {
+				"type": "string",
+				"pattern": "^[0-9]+(\\.[0-9]{1,2})?$"
+			  }
+			},
+			"required": ["paid_at", "amount"]
+		  }
+		},
+		"order_id": {
+		  "type": "string",
+		  "maxLength": 100
+		},
+		"merchant_id": {
+		  "type": "string",
+		  "maxLength": 100
+		},
+		"gross_amount": {
+		  "type": "string",
+		  "pattern": "^[0-9]+(\\.[0-9]{1,2})?$"
+		},
+		"fraud_status": {
+		  "type": "string",
+		  "maxLength": 50
+		},
+		"currency": {
+		  "type": "string",
+		  "maxLength": 10
+		}
+	  },
+	  "required": [
+		"transaction_time",
+		"transaction_status",
+		"transaction_id",
+		"status_message",
+		"status_code",
+		"signature_key",
+		"settlement_time",
+		"payment_type",
+		"order_id",
+		"merchant_id",
+		"gross_amount",
+		"fraud_status",
+		"currency"
+	  ],
+	"additionalProperties": false
+}

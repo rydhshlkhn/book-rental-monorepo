@@ -1,24 +1,24 @@
 {
      "GoVersion": "1.21",
      "Version": "v1.17.15",
-     "ServiceName": "library-service",
-     "PackagePrefix": "monorepo/services/library-service",
-     "ProtoSource": "monorepo/sdk/library-service/proto",
+     "ServiceName": "payment-service",
+     "PackagePrefix": "monorepo/services/payment-service",
+     "ProtoSource": "monorepo/sdk/payment-service/proto",
      "Owner": "",
      "License": "",
      "Year": 2024,
      "IsMonorepo": true,
      "RestHandler": true,
-     "GRPCHandler": true,
+     "GRPCHandler": false,
      "GraphQLHandler": false,
      "FiberRestHandler": false,
-     "KafkaHandler": true,
+     "KafkaHandler": false,
      "SchedulerHandler": false,
      "RedisSubsHandler": false,
      "TaskQueueHandler": false,
      "PostgresListenerHandler": false,
      "RabbitMQHandler": false,
-     "IsWorkerActive": true,
+     "IsWorkerActive": false,
      "RedisDeps": false,
      "SQLDeps": true,
      "MongoDeps": false,
@@ -28,25 +28,7 @@
      "WorkerPlugins": null,
      "Modules": [
           {
-               "ModuleName": "auth"
-          },
-          {
-               "ModuleName": "auth"
-          },
-          {
-               "ModuleName": "book"
-          },
-          {
-               "ModuleName": "fine"
-          },
-          {
-               "ModuleName": "lending"
-          },
-          {
                "ModuleName": "payment"
-          },
-          {
-               "ModuleName": "reservation"
           }
      ]
 }

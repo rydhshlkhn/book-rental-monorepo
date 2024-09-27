@@ -65,7 +65,6 @@ func (uc *lendingUsecaseImpl) ReturnLending(ctx context.Context, id int) (result
 		if midErr != nil {
 			return midErr.RawError
 		}
-		fmt.Println("Response :", snapResp)
 
 		fine := shareddomain.Fine{LendingID: existing.ID, Amount: amount, SnanpURL: snapResp.RedirectURL, PaymentStatus: constant.Pending}
 		err = uc.repoSQL.FineRepo().Save(ctx, &fine)
