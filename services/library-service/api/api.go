@@ -9,5 +9,5 @@ var JSONSchema embed.FS
 
 // GraphQLSchema schema sources
 //
-// //go:embed all:graphql
+//go:embed all:graphql
 var GraphQLSchema embed.FS

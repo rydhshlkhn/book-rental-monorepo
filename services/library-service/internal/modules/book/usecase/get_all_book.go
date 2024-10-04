@@ -13,6 +13,7 @@ func (uc *bookUsecaseImpl) GetAllBook(ctx context.Context, filter *domain.Filter
 	trace, ctx := tracer.StartTraceWithContext(ctx, "BookUsecase:GetAllBook")
 	defer trace.Finish()
 
+	filter.Preloads = []string{"BookItems"}
 	data, err := uc.repoSQL.BookRepo().FetchAll(ctx, filter)
 	if err != nil {
 		return result, err

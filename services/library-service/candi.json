@@ -10,7 +10,7 @@
      "IsMonorepo": true,
      "RestHandler": true,
      "GRPCHandler": true,
-     "GraphQLHandler": false,
+     "GraphQLHandler": true,
      "FiberRestHandler": false,
      "KafkaHandler": true,
      "SchedulerHandler": false,

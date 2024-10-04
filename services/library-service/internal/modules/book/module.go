@@ -3,7 +3,7 @@
 package book
 
 import (
-	// "monorepo/services/library-service/internal/modules/book/delivery/graphqlhandler"
+	"monorepo/services/library-service/internal/modules/book/delivery/graphqlhandler"
 	// "monorepo/services/library-service/internal/modules/book/delivery/grpchandler"
 	"monorepo/services/library-service/internal/modules/book/delivery/resthandler"
 	// "monorepo/services/library-service/internal/modules/book/delivery/workerhandler"
@@ -33,7 +33,7 @@ func NewModule(deps dependency.Dependency) *Module {
 	var mod Module
 	mod.restHandler = resthandler.NewRestHandler(usecase.GetSharedUsecase(), deps)
 	// mod.grpcHandler = grpchandler.NewGRPCHandler(usecase.GetSharedUsecase(), deps)
-	// mod.graphqlHandler = graphqlhandler.NewGraphQLHandler(usecase.GetSharedUsecase(), deps)
+	mod.graphqlHandler = graphqlhandler.NewGraphQLHandler(usecase.GetSharedUsecase(), deps)
 
 	mod.workerHandlers = map[types.Worker]interfaces.WorkerHandler{
 		// types.Kafka:           workerhandler.NewKafkaHandler(usecase.GetSharedUsecase(), deps),
