@@ -10,6 +10,8 @@ import (
 	"monorepo/services/auth-service/pkg/shared/usecase/common"
 
 	"github.com/golangid/candi/codebase/factory/dependency"
+	"github.com/golangid/candi/codebase/interfaces"
+	"github.com/golangid/candi/codebase/factory/types"
 )
 
 // TokenUsecase abstraction
@@ -27,6 +29,8 @@ type tokenUsecaseImpl struct {
 	deps          dependency.Dependency
 	sharedUsecase common.Usecase
 	repoSQL       repository.RepoSQL
+	cache         interfaces.Cache
+	redisPub      interfaces.Publisher
 	// repoMongo     repository.RepoMongo
 }
 
@@ -35,9 +39,14 @@ func NewTokenUsecase(deps dependency.Dependency) (TokenUsecase, func(sharedUseca
 	uc := &tokenUsecaseImpl{
 		deps:    deps,
 		repoSQL: repository.GetSharedRepoSQL(),
+		cache:   deps.GetRedisPool().Cache(),
 		// repoMongo: repository.GetSharedRepoMongo(),
 
 	}
+	if redisBroker := deps.GetBroker(types.RedisSubscriber); redisBroker != nil {
+		uc.redisPub = redisBroker.GetPublisher()
+	}
+
 	return uc, func(sharedUsecase common.Usecase) {
 		uc.sharedUsecase = sharedUsecase
 	}

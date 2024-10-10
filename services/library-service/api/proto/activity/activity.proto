@@ -1,0 +1,54 @@
+syntax="proto3";
+package activity;
+option go_package = "monorepo/services/library-service/api/proto/activity";
+
+service ActivityHandler {
+	rpc GetAllActivity(GetAllActivityRequest) returns (GetAllActivityResponse);
+	rpc GetDetailActivity(GetDetailActivityRequest) returns (ActivityModel);
+	rpc CreateActivity(RequestActivityModel) returns (ActivityModel);
+	rpc UpdateActivity(RequestActivityModel) returns (BaseResponse);
+	rpc DeleteActivity(RequestActivityModel) returns (BaseResponse);
+}
+
+message Meta {
+	int64 limit=1;
+	int64 page=2;
+	int64 totalRecords=3;
+	int64 totalPages=4;
+}
+
+message GetAllActivityRequest {
+	int64 limit=1;
+	int64 page=2;
+	string search=3;
+	string orderBy=4;
+	string sort=5;
+	bool showAll=6;
+	string startDate=7;
+	string endDate=8;
+}
+
+message GetAllActivityResponse {
+	Meta meta=1;
+	repeated ActivityModel data=2;
+}
+
+message GetDetailActivityRequest {
+	int64 id=1;
+}
+
+message RequestActivityModel {
+	int64 id=1;
+	string field=2;
+}
+
+message ActivityModel {
+	int64 id=1;
+	string field=2;
+	string createdAt=3;
+	string updatedAt=4;
+}
+
+message BaseResponse {
+	string message=1;
+}

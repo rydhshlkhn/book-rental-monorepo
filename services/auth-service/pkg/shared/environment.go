@@ -2,11 +2,13 @@
 
 package shared
 
+import "time"
+
 // Environment additional in this service
 type Environment struct {
 	// more additional environment with struct tag is environment key example:
 	// ExampleHost string `env:"EXAMPLE_HOST"`
-	
+	JWTAccessTokenAge time.Duration `env:"JWT_ACCESS_TOKEN_AGE"`
 }
 
 var sharedEnv Environment

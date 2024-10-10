@@ -5,8 +5,8 @@ package configs
 import (
 	"context"
 
-	"monorepo/services/auth-service/api"
 	"monorepo/sdk"
+	"monorepo/services/auth-service/api"
 	"monorepo/services/auth-service/pkg/shared"
 	"monorepo/services/auth-service/pkg/shared/repository"
 	"monorepo/services/auth-service/pkg/shared/usecase"
@@ -19,7 +19,7 @@ import (
 	"github.com/golangid/candi/codebase/interfaces"
 	"github.com/golangid/candi/config"
 	"github.com/golangid/candi/config/database"
-	
+
 	"github.com/golangid/candi/logger"
 	"github.com/golangid/candi/middleware"
 	"github.com/golangid/candi/tracer"
@@ -37,12 +37,12 @@ func LoadServiceConfigs(baseCfg *config.Config) (deps dependency.Dependency) {
 
 	baseCfg.LoadFunc(func(ctx context.Context) []interfaces.Closer {
 		jaeger := tracer.InitJaeger(baseCfg.ServiceName)
-		// redisDeps := database.InitRedis()
+		redisDeps := database.InitRedis()
 		sqlDeps := database.InitSQLDatabase()
 		// mongoDeps := database.InitMongoDB(ctx)
 
 		sdk.SetGlobalSDK(
-			// init service client sdk
+		// init service client sdk
 		)
 
 		locker := &candiutils.NoopLocker{}
@@ -50,7 +50,7 @@ func LoadServiceConfigs(baseCfg *config.Config) (deps dependency.Dependency) {
 		brokerDeps := broker.InitBrokers(
 			// broker.NewKafkaBroker(),
 			// broker.NewRabbitMQBroker(),
-			// broker.NewRedisBroker(redisDeps.WritePool()),
+			broker.NewRedisBroker(redisDeps.WritePool()),
 		)
 
 		validatorDeps := validator.NewValidator()
@@ -62,7 +62,7 @@ func LoadServiceConfigs(baseCfg *config.Config) (deps dependency.Dependency) {
 			dependency.SetValidator(validatorDeps),
 			dependency.SetBrokers(brokerDeps.GetBrokers()),
 			dependency.SetLocker(locker),
-			// dependency.SetRedisPool(redisDeps),
+			dependency.SetRedisPool(redisDeps),
 			dependency.SetSQLDatabase(sqlDeps),
 			// dependency.SetMongoDatabase(mongoDeps),
 			// ... add more dependencies

@@ -16,7 +16,7 @@
      "SchedulerHandler": false,
      "RedisSubsHandler": false,
      "TaskQueueHandler": false,
-     "PostgresListenerHandler": false,
+     "PostgresListenerHandler": true,
      "RabbitMQHandler": false,
      "IsWorkerActive": true,
      "RedisDeps": false,
@@ -27,6 +27,9 @@
      "SQLDriver": "postgres",
      "WorkerPlugins": null,
      "Modules": [
+          {
+               "ModuleName": "activity"
+          },
           {
                "ModuleName": "auth"
           },

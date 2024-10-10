@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	// @candi:usecaseImport
+	activityusecase "monorepo/services/library-service/internal/modules/activity/usecase"
 	authusecase "monorepo/services/library-service/internal/modules/auth/usecase"
 	bookusecase "monorepo/services/library-service/internal/modules/book/usecase"
 	fineusecase "monorepo/services/library-service/internal/modules/fine/usecase"
@@ -21,6 +22,7 @@ type (
 	// Usecase unit of work for all usecase in modules
 	Usecase interface {
 		// @candi:usecaseMethod
+		Activity() activityusecase.ActivityUsecase
 		Auth() authusecase.AuthUsecase
 		Payment() paymentusecase.PaymentUsecase
 		Reservation() reservationusecase.ReservationUsecase
@@ -31,6 +33,7 @@ type (
 
 	usecaseUow struct {
 		// @candi:usecaseField
+		activityusecase.ActivityUsecase
 		authusecase.AuthUsecase
 		paymentusecase.PaymentUsecase
 		reservationusecase.ReservationUsecase
@@ -51,6 +54,8 @@ func SetSharedUsecase(deps dependency.Dependency) {
 		var setSharedUsecaseFunc func(common.Usecase)
 
 		// @candi:usecaseCommon
+		usecaseInst.ActivityUsecase, setSharedUsecaseFunc = activityusecase.NewActivityUsecase(deps)
+		setSharedUsecaseFuncs = append(setSharedUsecaseFuncs, setSharedUsecaseFunc)
 		usecaseInst.AuthUsecase, setSharedUsecaseFunc = authusecase.NewAuthUsecase(deps)
 		setSharedUsecaseFuncs = append(setSharedUsecaseFuncs, setSharedUsecaseFunc)
 		usecaseInst.AuthUsecase, setSharedUsecaseFunc = authusecase.NewAuthUsecase(deps)
@@ -79,6 +84,10 @@ func GetSharedUsecase() Usecase {
 }
 
 // @candi:usecaseImplementation
+func (uc *usecaseUow) Activity() activityusecase.ActivityUsecase {
+	return uc.ActivityUsecase
+}
+
 func (uc *usecaseUow) Auth() authusecase.AuthUsecase {
 	return uc.AuthUsecase
 }

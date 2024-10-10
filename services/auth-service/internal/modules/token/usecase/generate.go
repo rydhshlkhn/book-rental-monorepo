@@ -3,12 +3,14 @@ package usecase
 import (
 	"context"
 	"monorepo/services/auth-service/internal/modules/token/domain"
+	"monorepo/services/auth-service/pkg/shared"
 	shareddomain "monorepo/services/auth-service/pkg/shared/domain"
 	constant "monorepo/services/auth-service/pkg/shared/domain/constant"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/golangid/candi/candihelper"
+	"github.com/golangid/candi/candishared"
 	"github.com/golangid/candi/tracer"
 )
 
@@ -28,8 +30,8 @@ func (uc *tokenUsecaseImpl) Generate(ctx context.Context, payload *domain.Claim)
 			RefreshToken: savedToken.RefreshToken,
 		}, nil
 	}
-
-	exp := now.Add(time.Hour * 10)
+	ageDuration := shared.GetEnv().JWTAccessTokenAge
+	exp := now.Add(ageDuration)
 
 	key := []byte(constant.TokenKey)
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -50,6 +52,13 @@ func (uc *tokenUsecaseImpl) Generate(ctx context.Context, payload *domain.Claim)
 	if err != nil {
 		return
 	}
+
+	uc.redisPub.PublishMessage(ctx, &candishared.PublisherArgument{
+		Topic:   domain.RedisTokenExpiredKeyConst,
+		Key:     domain.RedisTokenExpiredKeyConst,
+		Message: candihelper.ToBytes(claims),
+		Delay:   ageDuration,
+	})
 
 	// refresh token
 	refreshTokenHS := jwt.New(jwt.SigningMethodHS256)
